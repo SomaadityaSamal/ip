@@ -59,35 +59,68 @@ public class Friday {
                 continue;
             }
 
-            Task task = createTask(command, parts.length > 1 ? parts[1] : "");
-            tasks.add(task);
-            System.out.println(LINE + "\n" +
-                    " Got it. I've added this task:\n" +
-                    "   " + task + "\n" +
-                    " Now you have " + tasks.size() + " tasks in the list.\n" +
-                    LINE);
+            try {
+                Task task = createTask(command, parts.length > 1 ? parts[1] : ""); //project meeting /from Mon 2pm /to 4pm is the 2nd para
+                tasks.add(task);
+                System.out.println(LINE + "\n" +
+                        " Got it. I've added this task:\n" +
+                        "   " + task + "\n" +
+                        " Now you have " + tasks.size() + " tasks in the list.\n" +
+                        LINE);
+            } catch (FridayException e) {
+                System.out.println(LINE + "\n" +
+                        " " + e.getMessage() + "\n" +
+                        LINE);
+            }
         }
         System.out.println(LINE + "\n" +
                 "Bye. Hope to see you again soon!" + "\n" +
                 LINE);
     }
 
-    private static Task createTask(String command, String details) {
+    private static Task createTask(String command, String details) throws FridayException { //insert exception portion here
         if (command.equals("todo")) {
+            if (details.isBlank()) {
+                throw new FridayException("Apologies, todo cannot have an empty description sir");
+            }
             return new Todo(details);
         }
 
         if (command.equals("deadline")) {
-            String[] deadlineParts = details.split(" /by ", 2);
+            String[] deadlineParts = splitDetails(details, "/by");
+            if (deadlineParts.length < 2) {
+                throw new FridayException("Apologies i have no clue what that means");
+            } else if (deadlineParts[0].isBlank()) {
+                throw new FridayException("Apologies, deadline cannot have an empty description sir");
+            }
             return new Deadline(deadlineParts[0], deadlineParts[1]);
         }
 
         if (command.equals("event")) {
-            String[] eventParts = details.split(" /from ", 2);
-            String[] timeParts = eventParts[1].split(" /to ", 2);
+            String[] eventParts = splitDetails(details, "/from");
+            if (eventParts.length < 2) {
+                throw new FridayException("Apologies i have no clue what that means");
+            } else if (eventParts[0].isBlank()) {
+                throw new FridayException("Apologies, event cannot have an empty description sir");
+            }
+            String[] timeParts = splitDetails(eventParts[1], "/to");
+            if (timeParts.length < 2) {
+                throw new FridayException("Apologies i have no clue what that means");
+            }
             return new Event(eventParts[0], timeParts[0], timeParts[1]);
         }
 
-        return new Todo(command + " " + details);
+        throw new FridayException("Apologies i have no clue what that means");
+    }
+
+    private static String[] splitDetails(String details, String marker) {
+        int markerIndex = details.indexOf(marker);
+        if (markerIndex < 0) {
+            return new String[] { details };
+        }
+
+        String description = details.substring(0, markerIndex).trim();
+        String dateOrTime = details.substring(markerIndex + marker.length()).trim();
+        return new String[] { description, dateOrTime };
     }
 }

@@ -1,6 +1,4 @@
-/**
- * Represents a task stored by Friday.
- */
+
 public class Task {
     protected String description;
     private boolean isDone;

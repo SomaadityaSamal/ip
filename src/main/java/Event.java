@@ -1,6 +1,4 @@
-/**
- * Represents a task that starts and ends at specific dates or times.
- */
+
 public class Event extends Task {
     private String from;
     private String to;
