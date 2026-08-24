@@ -49,6 +49,19 @@ public class Friday {
                 continue;
             }
 
+            if (command.equals("delete")) {
+                int taskIndex = Integer.parseInt(parts[1].trim()) - 1; //reindexing it to fit the array index ig
+                Task removedTask = tasks.remove(taskIndex);
+                System.out.println(LINE + "\n" +
+                        " Noted. I've removed this task:\n" +
+                        "   " + removedTask + "\n" +
+                        " Now you have " + tasks.size() + " tasks in the list.\n" +
+                        LINE);
+                
+                continue;
+                
+            }
+
             if (input.equals("list")){
                 System.out.println(LINE + "\n" +
                         " Here are the tasks in your list:");
