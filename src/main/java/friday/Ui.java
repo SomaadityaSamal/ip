@@ -1,3 +1,8 @@
+package friday;
+
+import friday.task.Task;
+import friday.task.TaskList;
+
 /**
  * Handles all text shown to the user.
  */

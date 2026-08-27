@@ -1,3 +1,5 @@
+package friday.task;
+
 /**
  * Represents a task in Friday's task list.
  */

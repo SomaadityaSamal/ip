@@ -1,3 +1,10 @@
+package friday;
+
+import friday.task.Deadline;
+import friday.task.Event;
+import friday.task.Task;
+import friday.task.Todo;
+
 /**
  * Parses user input and saved task lines.
  */
