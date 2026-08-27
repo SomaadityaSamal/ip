@@ -1,3 +1,9 @@
+package friday;
+
+import friday.storage.Storage;
+import friday.task.Task;
+import friday.task.TaskList;
+
 import java.nio.file.Path;
 import java.util.Scanner;
 

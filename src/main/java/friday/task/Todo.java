@@ -1,3 +1,5 @@
+package friday.task;
+
 /**
  * Represents a task without any date or time.
  */
