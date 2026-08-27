@@ -1,9 +1,13 @@
-
+/**
+ * Represents a task that happens during a specific time period.
+ */
 public class Event extends Task {
     private String from;
     private String to;
 
-   
+    /**
+     * Creates an event task with the given description and time period.
+     */
     public Event(String description, String from, String to) {
         super(description);
         this.from = from;
@@ -13,6 +17,11 @@ public class Event extends Task {
     @Override
     public String getTaskTypeIcon() {
         return "E";
+    }
+
+    @Override
+    public String toFileString() {
+        return super.toFileString() + " | " + this.from + " | " + this.to;
     }
 
     @Override
