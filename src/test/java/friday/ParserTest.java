@@ -51,4 +51,16 @@ class ParserTest {
         assertThrows(FridayException.class, () -> Parser.parseTask("deadline", "return book"));
         assertThrows(FridayException.class, () -> Parser.parseTask("event", "project meeting /from 3/12/2025 1400"));
     }
+
+    /**
+     * Tests that find keywords are trimmed and cannot be blank.
+     *
+     * @throws FridayException if parsing fails unexpectedly
+     */
+    @Test
+    void parseKeyword_validAndBlankInputs_returnsTrimmedKeywordOrThrows() throws FridayException {
+        assertEquals("book", Parser.parseKeyword(" book "));
+        assertThrows(FridayException.class, () -> Parser.parseKeyword(""));
+        assertThrows(FridayException.class, () -> Parser.parseKeyword("   "));
+    }
 }

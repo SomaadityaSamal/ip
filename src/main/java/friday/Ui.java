@@ -50,6 +50,20 @@ public class Ui {
     }
 
     /**
+     * Shows the tasks that match a keyword search.
+     *
+     * @param tasks matching tasks to show
+     */
+    public void showMatchingTasks(TaskList tasks) {
+        System.out.println(LINE + "\n"
+                + " Here are the matching tasks in your list:");
+        for (int i = 0; i < tasks.asList().size(); i++) {
+            System.out.println(" " + (i + 1) + "." + tasks.asList().get(i));
+        }
+        System.out.println(LINE);
+    }
+
+    /**
      * Shows the message for a newly added task.
      *
      * @param task task that was added

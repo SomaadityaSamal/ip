@@ -96,6 +96,12 @@ public class Friday {
             return;
         }
 
+        if (command.equals("find")) {
+            TaskList matchingTasks = tasks.find(Parser.parseKeyword(details));
+            ui.showMatchingTasks(matchingTasks);
+            return;
+        }
+
         Task task = Parser.parseTask(command, details);
         tasks.add(task);
         storage.save(tasks);

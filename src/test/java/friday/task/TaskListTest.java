@@ -52,6 +52,28 @@ class TaskListTest {
     }
 
     /**
+     * Tests that finding by keyword returns tasks with matching descriptions.
+     *
+     * @throws FridayException if task access fails unexpectedly
+     */
+    @Test
+    void find_matchingKeyword_returnsTasksWithKeywordInDescription() throws FridayException {
+        TaskList tasks = new TaskList();
+        Todo firstTask = new Todo("read book");
+        Todo secondTask = new Todo("write notes");
+        Todo thirdTask = new Todo("return book");
+        tasks.add(firstTask);
+        tasks.add(secondTask);
+        tasks.add(thirdTask);
+
+        TaskList matchingTasks = tasks.find("book");
+
+        assertEquals(2, matchingTasks.size());
+        assertSame(firstTask, matchingTasks.get(0));
+        assertSame(thirdTask, matchingTasks.get(1));
+    }
+
+    /**
      * Tests that the list returned by asList cannot modify the task list.
      */
     @Test

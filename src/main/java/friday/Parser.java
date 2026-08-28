@@ -47,6 +47,21 @@ public class Parser {
     }
 
     /**
+     * Returns the keyword to search for.
+     *
+     * @param details user input containing the keyword
+     * @return keyword to search for
+     * @throws FridayException if the keyword is blank
+     */
+    public static String parseKeyword(String details) throws FridayException {
+        String keyword = details.trim();
+        if (keyword.isBlank()) {
+            throw new FridayException("Apologies, please give me a keyword to find sir");
+        }
+        return keyword;
+    }
+
+    /**
      * Creates a task from the user's command and command details.
      *
      * @param command command word from the user input
