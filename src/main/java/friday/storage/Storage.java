@@ -20,6 +20,8 @@ public class Storage {
 
     /**
      * Creates a storage object that uses the given file path.
+     *
+     * @param filePath path of the save file
      */
     public Storage(Path filePath) {
         this.filePath = filePath;
@@ -27,6 +29,9 @@ public class Storage {
 
     /**
      * Loads tasks from the save file.
+     *
+     * @return tasks loaded from the save file
+     * @throws FridayException if the save file cannot be read
      */
     public ArrayList<Task> load() throws FridayException {
         ArrayList<Task> tasks = new ArrayList<>();
@@ -48,6 +53,9 @@ public class Storage {
 
     /**
      * Saves all tasks to the save file.
+     *
+     * @param tasks tasks to save
+     * @throws FridayException if the tasks cannot be saved
      */
     public void save(TaskList tasks) throws FridayException {
         try {

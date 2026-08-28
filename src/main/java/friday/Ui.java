@@ -14,10 +14,10 @@ public class Ui {
      */
     public void showWelcome() {
         String banner = "_____ ____  ___ ____    _ __   __\n"
-                + "|  ___|  _ \\|_ _|  _ \\  / \\\\ \\ / /\n"
-                + "| |_  | |_) || || | | |/ _ \\\\ V / \n"
-                + "|  _| |  _ < | || |_| / ___ \\| |  \n"
-                + "|_|   |_| \\_\\___|____/_/   \\_\\_|";
+                         + "|  ___|  _ \\|_ _|  _ \\  / \\\\ \\ / /\n"
+                         + "| |_  | |_) || || | | |/ _ \\\\ V / \n"
+                         + "|  _| |  _ < | || |_| / ___ \\| |  \n"
+                         + "|_|   |_| \\_\\___|____/_/   \\_\\_|";
         System.out.println(banner);
 
         System.out.println("...\n"
@@ -37,6 +37,8 @@ public class Ui {
 
     /**
      * Shows the task list.
+     *
+     * @param tasks tasks to show
      */
     public void showTaskList(TaskList tasks) {
         System.out.println(LINE + "\n"
@@ -49,6 +51,9 @@ public class Ui {
 
     /**
      * Shows the message for a newly added task.
+     *
+     * @param task task that was added
+     * @param taskCount number of tasks in the list
      */
     public void showTaskAdded(Task task, int taskCount) {
         System.out.println(LINE + "\n"
@@ -60,6 +65,8 @@ public class Ui {
 
     /**
      * Shows the message for a task that has been marked as done.
+     *
+     * @param task task that was marked as done
      */
     public void showTaskMarked(Task task) {
         System.out.println(LINE + "\n"
@@ -70,6 +77,8 @@ public class Ui {
 
     /**
      * Shows the message for a task that has been marked as not done.
+     *
+     * @param task task that was marked as not done
      */
     public void showTaskUnmarked(Task task) {
         System.out.println(LINE + "\n"
@@ -80,6 +89,9 @@ public class Ui {
 
     /**
      * Shows the message for a deleted task.
+     *
+     * @param task task that was deleted
+     * @param taskCount number of tasks left in the list
      */
     public void showTaskDeleted(Task task, int taskCount) {
         System.out.println(LINE + "\n"
@@ -91,6 +103,8 @@ public class Ui {
 
     /**
      * Shows an error message.
+     *
+     * @param message error message to show
      */
     public void showError(String message) {
         System.out.println(LINE + "\n"

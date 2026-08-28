@@ -18,22 +18,41 @@ public class Deadline extends Task {
 
     /**
      * Creates a deadline task with the given description and deadline.
+     *
+     * @param description description of the deadline task
+     * @param by deadline date and time
+     * @throws FridayException if the deadline date and time cannot be parsed
      */
     public Deadline(String description, String by) throws FridayException {
         super(description);
         this.by = parseDateTime(by);
     }
 
+    /**
+     * Returns the icon that shows this task is a deadline.
+     *
+     * @return deadline type icon
+     */
     @Override
     public String getTaskTypeIcon() {
         return "D";
     }
 
+    /**
+     * Returns this deadline in the format used by the save file.
+     *
+     * @return save-file representation of the deadline
+     */
     @Override
     public String toFileString() {
         return super.toFileString() + " | " + this.by.format(FILE_FORMAT);
     }
 
+    /**
+     * Returns this deadline as text for display to the user.
+     *
+     * @return user-facing representation of the deadline
+     */
     @Override
     public String toString() {
         return super.toString() + " (by: " + this.by.format(DISPLAY_FORMAT) + ")";
