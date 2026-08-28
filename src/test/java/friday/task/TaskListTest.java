@@ -1,13 +1,14 @@
 package friday.task;
 
-import friday.FridayException;
-import org.junit.jupiter.api.Test;
-
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import friday.FridayException;
+
+import java.util.List;
+
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests task list operations that change or expose the stored tasks.
