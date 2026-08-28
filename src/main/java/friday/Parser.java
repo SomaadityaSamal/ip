@@ -12,6 +12,9 @@ public class Parser {
 
     /**
      * Returns the first word of the user input as the command.
+     *
+     * @param input full user input
+     * @return command word from the input
      */
     public static String getCommand(String input) {
         return input.split(" ", 2)[0];
@@ -19,6 +22,9 @@ public class Parser {
 
     /**
      * Returns everything after the command word.
+     *
+     * @param input full user input
+     * @return details after the command word, or an empty string if there are none
      */
     public static String getDetails(String input) {
         String[] parts = input.split(" ", 2);
@@ -27,6 +33,10 @@ public class Parser {
 
     /**
      * Converts a one-based task number from user input to a zero-based index.
+     *
+     * @param details user input containing the task number
+     * @return zero-based task index
+     * @throws FridayException if the task number is not a valid integer
      */
     public static int parseTaskNumber(String details) throws FridayException {
         try {
@@ -38,6 +48,11 @@ public class Parser {
 
     /**
      * Creates a task from the user's command and command details.
+     *
+     * @param command command word from the user input
+     * @param details details after the command word
+     * @return task created from the command
+     * @throws FridayException if the command or task details are invalid
      */
     public static Task parseTask(String command, String details) throws FridayException {
         if (command.equals("todo")) {
@@ -57,6 +72,10 @@ public class Parser {
 
     /**
      * Creates a task from one line in the save file.
+     *
+     * @param line line from the save file
+     * @return task created from the saved line
+     * @throws FridayException if the saved line cannot be parsed
      */
     public static Task parseSavedTask(String line) throws FridayException {
         String[] parts = line.split(" \\| ", -1);

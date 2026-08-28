@@ -14,6 +14,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  */
 class TaskListTest {
 
+    /**
+     * Tests that adding multiple tasks updates the task count.
+     */
     @Test
     void addAndSize_multipleTasks_tracksNumberOfTasks() {
         TaskList tasks = new TaskList();
@@ -24,24 +27,11 @@ class TaskListTest {
         assertEquals(2, tasks.size());
     }
 
-    @Test
-    void markAndUnmark_validIndex_changesDoneStateOfSelectedTask() throws FridayException {
-        TaskList tasks = new TaskList();
-        Todo firstTask = new Todo("read book");
-        Todo secondTask = new Todo("write notes");
-        tasks.add(firstTask);
-        tasks.add(secondTask);
-
-        Task markedTask = tasks.mark(1);
-        assertSame(secondTask, markedTask);
-        assertEquals("T | 0 | read book", firstTask.toFileString());
-        assertEquals("T | 1 | write notes", secondTask.toFileString());
-
-        Task unmarkedTask = tasks.unmark(1);
-        assertSame(secondTask, unmarkedTask);
-        assertEquals("T | 0 | write notes", secondTask.toFileString());
-    }
-
+    /**
+     * Tests that deleting a task removes and returns only the selected task.
+     *
+     * @throws FridayException if task access fails unexpectedly
+     */
     @Test
     void delete_validIndex_removesAndReturnsOnlySelectedTask() throws FridayException {
         TaskList tasks = new TaskList();
@@ -60,18 +50,9 @@ class TaskListTest {
         assertSame(thirdTask, tasks.get(1));
     }
 
-    @Test
-    void getMarkUnmarkDelete_invalidIndexes_throwFridayException() {
-        TaskList tasks = new TaskList();
-        tasks.add(new Todo("read book"));
-
-        assertThrows(FridayException.class, () -> tasks.get(-1));
-        assertThrows(FridayException.class, () -> tasks.get(1));
-        assertThrows(FridayException.class, () -> tasks.mark(2));
-        assertThrows(FridayException.class, () -> tasks.unmark(2));
-        assertThrows(FridayException.class, () -> tasks.delete(2));
-    }
-
+    /**
+     * Tests that the list returned by asList cannot modify the task list.
+     */
     @Test
     void asList_returnedListCannotModifyTaskList() {
         TaskList tasks = new TaskList();

@@ -21,6 +21,8 @@ public class TaskList {
 
     /**
      * Creates a task list with the given tasks.
+     *
+     * @param tasks initial tasks in the task list
      */
     public TaskList(ArrayList<Task> tasks) {
         this.tasks = tasks;
@@ -28,6 +30,8 @@ public class TaskList {
 
     /**
      * Adds a task to the list.
+     *
+     * @param task task to add
      */
     public void add(Task task) {
         tasks.add(task);
@@ -35,6 +39,10 @@ public class TaskList {
 
     /**
      * Marks the task at the given zero-based index as done.
+     *
+     * @param taskIndex zero-based index of the task to mark
+     * @return task that was marked
+     * @throws FridayException if the index is outside the task list
      */
     public Task mark(int taskIndex) throws FridayException {
         Task task = get(taskIndex);
@@ -44,6 +52,10 @@ public class TaskList {
 
     /**
      * Marks the task at the given zero-based index as not done.
+     *
+     * @param taskIndex zero-based index of the task to unmark
+     * @return task that was unmarked
+     * @throws FridayException if the index is outside the task list
      */
     public Task unmark(int taskIndex) throws FridayException {
         Task task = get(taskIndex);
@@ -53,6 +65,10 @@ public class TaskList {
 
     /**
      * Deletes and returns the task at the given zero-based index.
+     *
+     * @param taskIndex zero-based index of the task to delete
+     * @return task that was deleted
+     * @throws FridayException if the index is outside the task list
      */
     public Task delete(int taskIndex) throws FridayException {
         if (taskIndex < 0 || taskIndex >= tasks.size()) {
@@ -63,6 +79,10 @@ public class TaskList {
 
     /**
      * Returns the task at the given zero-based index.
+     *
+     * @param taskIndex zero-based index of the task to return
+     * @return task at the given index
+     * @throws FridayException if the index is outside the task list
      */
     public Task get(int taskIndex) throws FridayException {
         if (taskIndex < 0 || taskIndex >= tasks.size()) {
@@ -73,6 +93,8 @@ public class TaskList {
 
     /**
      * Returns the number of tasks in the list.
+     *
+     * @return number of tasks
      */
     public int size() {
         return tasks.size();
@@ -80,6 +102,8 @@ public class TaskList {
 
     /**
      * Returns the tasks as a read-only list.
+     *
+     * @return read-only view of the tasks
      */
     public List<Task> asList() {
         return Collections.unmodifiableList(tasks);

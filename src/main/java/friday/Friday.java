@@ -17,6 +17,8 @@ public class Friday {
 
     /**
      * Creates a Friday chatbot that stores tasks at the given file path.
+     *
+     * @param filePath path of the file used to save tasks
      */
     public Friday(String filePath) {
         this.ui = new Ui();
@@ -48,6 +50,8 @@ public class Friday {
 
     /**
      * Starts Friday using the default save file.
+     *
+     * @param args command line arguments
      */
     public static void main(String[] args) {
         new Friday("data/duke.txt").run();
