@@ -11,6 +11,8 @@ import friday.task.TaskList;
  * Runs the Friday chatbot.
  */
 public class Friday {
+    private static final String DEFAULT_FILE_PATH = "data/duke.txt";
+
     private final Storage storage;
     private final TaskList tasks;
     private final Ui ui;
@@ -35,17 +37,11 @@ public class Friday {
 
         while (true) {
             String input = scanner.nextLine().trim();
+            System.out.println(getResponse(input));
             if (input.equals("bye")) {
                 break;
             }
-
-            try {
-                handleCommand(input);
-            } catch (FridayException e) {
-                ui.showError(e.getMessage());
-            }
         }
-        ui.showBye();
     }
 
     /**
@@ -54,7 +50,35 @@ public class Friday {
      * @param args command line arguments
      */
     public static void main(String[] args) {
-        new Friday("data/duke.txt").run();
+        new Friday(DEFAULT_FILE_PATH).run();
+    }
+
+    /**
+     * Returns Friday's response to one line of user input.
+     *
+     * @param input user input from the command line or GUI
+     * @return response to show to the user
+     */
+    public String getResponse(String input) {
+        String trimmedInput = input.trim();
+        if (trimmedInput.equals("bye")) {
+            return ui.getBye();
+        }
+
+        try {
+            return handleCommand(trimmedInput);
+        } catch (FridayException e) {
+            return ui.getError(e.getMessage());
+        }
+    }
+
+    /**
+     * Returns Friday's welcome message.
+     *
+     * @return welcome message to show when the app starts
+     */
+    public String getWelcome() {
+        return ui.getWelcome();
     }
 
     private TaskList loadTaskList() {
@@ -66,45 +90,40 @@ public class Friday {
         }
     }
 
-    private void handleCommand(String input) throws FridayException {
+    private String handleCommand(String input) throws FridayException {
         String command = Parser.getCommand(input);
         String details = Parser.getDetails(input);
 
         if (command.equals("list")) {
-            ui.showTaskList(tasks);
-            return;
+            return ui.getTaskList(tasks);
         }
 
         if (command.equals("mark")) {
             Task task = tasks.mark(Parser.parseTaskNumber(details));
             storage.save(tasks);
-            ui.showTaskMarked(task);
-            return;
+            return ui.getTaskMarked(task);
         }
 
         if (command.equals("unmark")) {
             Task task = tasks.unmark(Parser.parseTaskNumber(details));
             storage.save(tasks);
-            ui.showTaskUnmarked(task);
-            return;
+            return ui.getTaskUnmarked(task);
         }
 
         if (command.equals("delete")) {
             Task removedTask = tasks.delete(Parser.parseTaskNumber(details));
             storage.save(tasks);
-            ui.showTaskDeleted(removedTask, tasks.size());
-            return;
+            return ui.getTaskDeleted(removedTask, tasks.size());
         }
 
         if (command.equals("find")) {
             TaskList matchingTasks = tasks.find(Parser.parseKeyword(details));
-            ui.showMatchingTasks(matchingTasks);
-            return;
+            return ui.getMatchingTasks(matchingTasks);
         }
 
         Task task = Parser.parseTask(command, details);
         tasks.add(task);
         storage.save(tasks);
-        ui.showTaskAdded(task, tasks.size());
+        return ui.getTaskAdded(task, tasks.size());
     }
 }
