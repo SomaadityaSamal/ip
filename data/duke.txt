@@ -3,3 +3,4 @@ T | 0 | run
 T | 0 | buy bread
 T | 0 | run
 T | 0 | Hi
+T | 0 | hi
