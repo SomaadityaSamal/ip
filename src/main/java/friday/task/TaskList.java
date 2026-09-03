@@ -1,10 +1,10 @@
 package friday.task;
 
-import friday.FridayException;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import friday.FridayException;
 
 /**
  * Stores the task list and provides operations that modify it.
