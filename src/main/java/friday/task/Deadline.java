@@ -1,10 +1,10 @@
 package friday.task;
 
-import friday.FridayException;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+
+import friday.FridayException;
 
 /**
  * Represents a task that needs to be done by a specific date or time.

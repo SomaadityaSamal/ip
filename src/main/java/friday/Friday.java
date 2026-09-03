@@ -1,11 +1,11 @@
 package friday;
 
+import java.nio.file.Path;
+import java.util.Scanner;
+
 import friday.storage.Storage;
 import friday.task.Task;
 import friday.task.TaskList;
-
-import java.nio.file.Path;
-import java.util.Scanner;
 
 /**
  * Runs the Friday chatbot.

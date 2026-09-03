@@ -1,16 +1,16 @@
 package friday.storage;
 
-import friday.FridayException;
-import friday.Parser;
-import friday.task.Task;
-import friday.task.TaskList;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+
+import friday.FridayException;
+import friday.Parser;
+import friday.task.Task;
+import friday.task.TaskList;
 
 /**
  * Loads tasks from and saves tasks to the hard disk.
