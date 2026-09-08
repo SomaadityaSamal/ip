@@ -29,6 +29,14 @@ public class Event extends Task {
         super(description);
         this.from = parseDateTime(from);
         this.to = parseDateTime(to);
+
+        if (!this.to.isAfter(this.from)) {
+            throw new FridayException("Apologies, event end time must be after the start time sir");
+        }
+
+        assert this.from != null : "Event start time should have been parsed";
+        assert this.to != null : "Event end time should have been parsed";
+        assert this.to.isAfter(this.from) : "Event end time should be after start time";
     }
 
     /**
