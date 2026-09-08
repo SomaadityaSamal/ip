@@ -34,6 +34,8 @@ public class TaskList {
      * @param task task to add
      */
     public void add(Task task) {
+        assert task != null : "TaskList should not store null tasks";
+
         tasks.add(task);
     }
 

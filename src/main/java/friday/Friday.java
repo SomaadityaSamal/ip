@@ -36,7 +36,10 @@ public class Friday {
         ui.showWelcome();
 
         while (true) {
-            String input = scanner.nextLine().trim();
+            String rawInput = scanner.nextLine();
+            assert rawInput != null : "Scanner input should not be null";
+
+            String input = rawInput.trim();
             System.out.println(getResponse(input));
             if (input.equals("bye")) {
                 break;
@@ -60,8 +63,10 @@ public class Friday {
      * @return response to show to the user
      */
     public String getResponse(String input) {
+        assert input != null : "User input should not be null";
+
         String trimmedInput = input.trim();
-        if (trimmedInput.equals("bye")) {
+        if (trimmedInput.equalsIgnoreCase("bye")) {
             return ui.getBye();
         }
 
@@ -91,37 +96,45 @@ public class Friday {
     }
 
     private String handleCommand(String input) throws FridayException {
+        assert !input.isBlank() : "Blank input should be handled before command parsing";
+
         String command = Parser.getCommand(input);
         String details = Parser.getDetails(input);
+        assert !command.isBlank() : "Parsed command should not be blank";
 
-        if (command.equals("list")) {
+        if (command.equalsIgnoreCase("help")) {
+            return ui.getHelp();
+        }
+
+        if (command.equalsIgnoreCase("list")) {
             return ui.getTaskList(tasks);
         }
 
-        if (command.equals("mark")) {
+        if (command.equalsIgnoreCase("mark")) {
             Task task = tasks.mark(Parser.parseTaskNumber(details));
             storage.save(tasks);
             return ui.getTaskMarked(task);
         }
 
-        if (command.equals("unmark")) {
+        if (command.equalsIgnoreCase("unmark")) {
             Task task = tasks.unmark(Parser.parseTaskNumber(details));
             storage.save(tasks);
             return ui.getTaskUnmarked(task);
         }
 
-        if (command.equals("delete")) {
+        if (command.equalsIgnoreCase("delete")) {
             Task removedTask = tasks.delete(Parser.parseTaskNumber(details));
             storage.save(tasks);
             return ui.getTaskDeleted(removedTask, tasks.size());
         }
 
-        if (command.equals("find")) {
+        if (command.equalsIgnoreCase("find")) {
             TaskList matchingTasks = tasks.find(Parser.parseKeyword(details));
             return ui.getMatchingTasks(matchingTasks);
         }
 
         Task task = Parser.parseTask(command, details);
+        assert task != null : "Parser should return a task for add commands";
         tasks.add(task);
         storage.save(tasks);
         return ui.getTaskAdded(task, tasks.size());

@@ -47,6 +47,8 @@ public class MainWindow extends AnchorPane {
      * @param friday chatbot instance
      */
     public void setFriday(Friday friday) {
+        assert friday != null : "MainWindow should be initialized with a Friday instance";
+
         this.friday = friday;
         dialogContainer.getChildren().add(DialogBox.getFridayDialog(friday.getWelcome(), fridayImage));
     }
@@ -56,6 +58,8 @@ public class MainWindow extends AnchorPane {
      */
     @FXML
     private void handleUserInput() {
+        assert friday != null : "Friday instance should be set before handling input";
+
         String input = userInput.getText();
         if (input.isBlank()) {
             return;

@@ -236,4 +236,20 @@ public class Ui {
     public void showLoadingError() {
         showError("Sorry, I could not load saved tasks. Starting with an empty list.");
     }
+
+    public String getHelp() {
+        return LINE + "\n"
+                + " Here are the commands you can use:\n"
+                + " 1. list - shows all tasks in the list\n"
+                + " 2. todo <description> - adds a todo task\n"
+                + " 3. deadline <description> /by <date> - adds a deadline task\n"
+                + " 4. event <description> /at <date> - adds an event task\n"
+                + " 5. mark <task number> - marks a task as done\n"
+                + " 6. unmark <task number> - marks a task as not done\n"
+                + " 7. delete <task number> - deletes a task from the list\n"
+                + " 8. find <keyword> - finds tasks that match the keyword\n"
+                + " 9. help - shows this help message\n"
+                + "10. bye - exits the application\n"
+                + LINE;
+    }
 }
