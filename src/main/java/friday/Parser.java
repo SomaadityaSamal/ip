@@ -2,6 +2,7 @@ package friday;
 
 import friday.task.Deadline;
 import friday.task.Event;
+import friday.task.RepeatFrequency;
 import friday.task.Task;
 import friday.task.Todo;
 
@@ -62,6 +63,28 @@ public class Parser {
     }
 
     /**
+     * Converts the task number in a repeat command to a zero-based index.
+     *
+     * @param details repeat command details
+     * @return zero-based task index
+     * @throws FridayException if the task number is not a valid integer
+     */
+    public static int parseRepeatTaskNumber(String details) throws FridayException {
+        return parseTaskNumber(splitRepeatDetails(details)[0]);
+    }
+
+    /**
+     * Returns the repeat frequency from a repeat command.
+     *
+     * @param details repeat command details
+     * @return repeat frequency
+     * @throws FridayException if the frequency is missing or unsupported
+     */
+    public static RepeatFrequency parseRepeatFrequency(String details) throws FridayException {
+        return RepeatFrequency.parse(splitRepeatDetails(details)[1]);
+    }
+
+    /**
      * Creates a task from the user's command and command details.
      *
      * @param command command word from the user input
@@ -114,6 +137,7 @@ public class Parser {
         if (parts[1].equals("1")) {
             task.markAsDone();
         }
+        applySavedRepeatFrequency(task, parts);
         return task;
     }
 
@@ -160,5 +184,21 @@ public class Parser {
         String description = details.substring(0, markerIndex).trim();
         String dateOrTime = details.substring(markerIndex + marker.length()).trim();
         return new String[] { description, dateOrTime };
+    }
+
+    private static String[] splitRepeatDetails(String details) throws FridayException {
+        String[] parts = details.trim().split(" ", 2);
+        if (parts.length < 2 || parts[0].isBlank() || parts[1].isBlank()) {
+            throw new FridayException("Apologies, please use repeat <task number> <frequency> sir");
+        }
+        return parts;
+    }
+
+    private static void applySavedRepeatFrequency(Task task, String[] parts) throws FridayException {
+        String repeatPrefix = "repeat:";
+        String possibleRepeatFrequency = parts[parts.length - 1];
+        if (possibleRepeatFrequency.startsWith(repeatPrefix)) {
+            task.setRepeatFrequency(RepeatFrequency.parse(possibleRepeatFrequency.substring(repeatPrefix.length())));
+        }
     }
 }

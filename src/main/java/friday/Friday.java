@@ -1,10 +1,12 @@
 package friday;
 
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.Scanner;
 
 import friday.storage.Storage;
+import friday.task.RepeatFrequency;
 import friday.task.Task;
 import friday.task.TaskList;
 
@@ -19,7 +21,11 @@ public class Friday {
     private static final String COMMAND_HELP = "help";
     private static final String COMMAND_LIST = "list";
     private static final String COMMAND_MARK = "mark";
+    private static final String COMMAND_REMINDERS = "reminders";
+    private static final String COMMAND_REPEAT = "repeat";
+    private static final String COMMAND_SORT = "sort";
     private static final String COMMAND_UNMARK = "unmark";
+    private static final long UPCOMING_REMINDER_DAYS = 2;
 
     private final Storage storage;
     private final TaskList tasks;
@@ -41,7 +47,7 @@ public class Friday {
      */
     public void run() {
         Scanner scanner = new Scanner(System.in);
-        ui.showWelcome();
+        System.out.println(getWelcome());
 
         while (true) {
             String rawInput = scanner.nextLine();
@@ -91,7 +97,9 @@ public class Friday {
      * @return welcome message to show when the app starts
      */
     public String getWelcome() {
-        return ui.getWelcome();
+        LocalDateTime now = LocalDateTime.now();
+        TaskList upcomingReminders = tasks.getUpcomingReminders(now, now.plusDays(UPCOMING_REMINDER_DAYS));
+        return ui.getWelcome(upcomingReminders);
     }
 
     private TaskList loadTaskList() {
@@ -141,6 +149,24 @@ public class Friday {
         if (normalizedCommand.equals(COMMAND_FIND)) {
             TaskList matchingTasks = tasks.find(Parser.parseKeyword(details));
             return ui.getMatchingTasks(matchingTasks);
+        }
+
+        if (normalizedCommand.equals(COMMAND_SORT)) {
+            tasks.sortByReminderDateTime();
+            storage.save(tasks);
+            return ui.getTasksSorted(tasks);
+        }
+
+        if (normalizedCommand.equals(COMMAND_REPEAT)) {
+            int taskIndex = Parser.parseRepeatTaskNumber(details);
+            RepeatFrequency repeatFrequency = Parser.parseRepeatFrequency(details);
+            Task task = tasks.setRepeatFrequency(taskIndex, repeatFrequency);
+            storage.save(tasks);
+            return ui.getTaskRepeated(task, repeatFrequency);
+        }
+
+        if (normalizedCommand.equals(COMMAND_REMINDERS)) {
+            return ui.getReminders(tasks.getTasksWithReminders());
         }
 
         Task task = Parser.parseTask(normalizedCommand, details);

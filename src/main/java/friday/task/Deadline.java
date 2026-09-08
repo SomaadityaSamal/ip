@@ -1,6 +1,7 @@
 package friday.task;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import friday.FridayException;
 
@@ -33,13 +34,23 @@ public class Deadline extends Task {
     }
 
     /**
+     * Returns this deadline's due date and time.
+     *
+     * @return deadline date and time
+     */
+    @Override
+    public Optional<LocalDateTime> getReminderDateTime() {
+        return Optional.of(by);
+    }
+
+    /**
      * Returns this deadline in the format used by the save file.
      *
      * @return save-file representation of the deadline
      */
     @Override
     public String toFileString() {
-        return super.toFileString() + " | " + TaskDateTime.formatForFile(this.by);
+        return appendRepeatFrequency(getBaseFileString() + " | " + TaskDateTime.formatForFile(this.by));
     }
 
     /**
