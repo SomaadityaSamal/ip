@@ -1,24 +1,39 @@
 .root {
-    main-color: rgb(237, 255, 242);
+    main-color: #eef8f1;
+    accent-color: #26935f;
+    accent-hover-color: #31a96f;
+    accent-pressed-color: #1d764c;
     -fx-background-color: main-color;
 }
 
 .text-field {
-    -fx-background-color: #d9ffe2;
+    -fx-background-color: white;
+    -fx-background-radius: 8px;
+    -fx-border-color: #b6d7c4;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
     -fx-font: 16px "Arial";
+    -fx-padding: 0 12px;
+    -fx-prompt-text-fill: #6f8b7a;
+}
+
+.text-field:focused {
+    -fx-border-color: accent-color;
 }
 
 .button {
-    -fx-background-color: mediumspringgreen;
+    -fx-background-color: accent-color;
+    -fx-background-radius: 8px;
+    -fx-text-fill: white;
     -fx-font: bold 14px "Arial";
 }
 
 .button:hover {
-    -fx-background-color: cyan;
+    -fx-background-color: accent-hover-color;
 }
 
 .button:pressed {
-    -fx-background-color: orange;
+    -fx-background-color: accent-pressed-color;
 }
 
 .scroll-pane,
@@ -27,13 +42,13 @@
 }
 
 .scroll-bar {
-    -fx-font-size: 10px;
+    -fx-font-size: 9px;
     -fx-background-color: main-color;
 }
 
 .scroll-bar .thumb {
-    -fx-background-color: #ff9cb4;
-    -fx-background-radius: 1em;
+    -fx-background-color: #8ec3a2;
+    -fx-background-radius: 8px;
 }
 
 .scroll-bar .increment-button,
