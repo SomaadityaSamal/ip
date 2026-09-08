@@ -2,6 +2,7 @@ package friday;
 
 import java.util.List;
 
+import friday.task.RepeatFrequency;
 import friday.task.Task;
 import friday.task.TaskList;
 
@@ -17,6 +18,16 @@ public class Ui {
      * @return welcome message
      */
     public String getWelcome() {
+        return getWelcome(new TaskList());
+    }
+
+    /**
+     * Returns the welcome message with upcoming reminders when any exist.
+     *
+     * @param upcomingReminders tasks due soon
+     * @return welcome message
+     */
+    public String getWelcome(TaskList upcomingReminders) {
         String banner = "_____ ____  ___ ____    _ __   __\n"
                          + "|  ___|  _ \\|_ _|  _ \\  / \\\\ \\ / /\n"
                          + "| |_  | |_) || || | | |/ _ \\\\ V / \n"
@@ -27,7 +38,8 @@ public class Ui {
                 + "...\n"
                 + "\n"
                 + "What can I do for you sir?\n"
-                + LINE;
+                + LINE
+                + getStartupReminderText(upcomingReminders);
     }
 
     /**
@@ -82,6 +94,31 @@ public class Ui {
      */
     public String getMatchingTasks(TaskList tasks) {
         return getIndexedTaskList(" Here are the matching tasks in your list:", tasks);
+    }
+
+    /**
+     * Returns the message shown after tasks are sorted.
+     *
+     * @param tasks sorted tasks
+     * @return sorted task list message
+     */
+    public String getTasksSorted(TaskList tasks) {
+        return getIndexedTaskList(" Here are your tasks sorted by date and time:", tasks);
+    }
+
+    /**
+     * Returns the reminder list message.
+     *
+     * @param tasks tasks that have reminder dates
+     * @return reminder list message
+     */
+    public String getReminders(TaskList tasks) {
+        if (tasks.size() == 0) {
+            return LINE + "\n"
+                    + " You do not have any reminders yet.\n"
+                    + LINE;
+        }
+        return getIndexedTaskList(" Here are your reminders, sorted chronologically:", tasks);
     }
 
     private String getIndexedTaskList(String heading, TaskList tasks) {
@@ -195,6 +232,20 @@ public class Ui {
     }
 
     /**
+     * Returns the message for a task that has been marked as recurring.
+     *
+     * @param task task that was marked as recurring
+     * @param repeatFrequency repeat frequency assigned to the task
+     * @return recurring task message
+     */
+    public String getTaskRepeated(Task task, RepeatFrequency repeatFrequency) {
+        return LINE + "\n"
+                + " Got it. This task now repeats " + repeatFrequency.getText() + ":\n"
+                + "   " + task + "\n"
+                + LINE;
+    }
+
+    /**
      * Shows the message for a deleted task.
      *
      * @param task task that was deleted
@@ -248,8 +299,18 @@ public class Ui {
                 + " 6. unmark <task number> - marks a task as not done\n"
                 + " 7. delete <task number> - deletes a task from the list\n"
                 + " 8. find <keyword> - finds tasks that match the keyword\n"
-                + " 9. help - shows this help message\n"
-                + "10. bye - exits the application\n"
+                + " 9. sort - sorts dated tasks chronologically\n"
+                + "10. repeat <task number> <frequency> - makes a task recurring\n"
+                + "11. reminders - shows dated tasks sorted chronologically\n"
+                + "12. help - shows this help message\n"
+                + "13. bye - exits the application\n"
                 + LINE;
+    }
+
+    private String getStartupReminderText(TaskList upcomingReminders) {
+        if (upcomingReminders.size() == 0) {
+            return "";
+        }
+        return "\n" + getIndexedTaskList(" Reminders due in the next 2 days:", upcomingReminders);
     }
 }

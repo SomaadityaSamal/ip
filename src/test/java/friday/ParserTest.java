@@ -67,6 +67,19 @@ class ParserTest {
     }
 
     /**
+     * Tests that recurring task information is restored from saved task lines.
+     *
+     * @throws FridayException if parsing fails unexpectedly
+     */
+    @Test
+    void parseSavedTask_recurringDeadline_restoresRepeatFrequency() throws FridayException {
+        Task task = Parser.parseSavedTask("D | 0 | submit report | 2025-12-02 1800 | repeat:weekly");
+
+        assertEquals("D | 0 | submit report | 2025-12-02 1800 | repeat:weekly", task.toFileString());
+        assertEquals("[D][ ] submit report (repeats: weekly) (by: Dec 02 2025 6:00pm)", task.toString());
+    }
+
+    /**
      * Tests that missing task details cause a Friday exception.
      */
     @Test

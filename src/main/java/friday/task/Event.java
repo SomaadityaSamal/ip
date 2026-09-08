@@ -1,6 +1,7 @@
 package friday.task;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import friday.FridayException;
 
@@ -44,14 +45,24 @@ public class Event extends Task {
     }
 
     /**
+     * Returns this event's start date and time.
+     *
+     * @return event start date and time
+     */
+    @Override
+    public Optional<LocalDateTime> getReminderDateTime() {
+        return Optional.of(from);
+    }
+
+    /**
      * Returns this event in the format used by the save file.
      *
      * @return save-file representation of the event
      */
     @Override
     public String toFileString() {
-        return super.toFileString() + " | " + TaskDateTime.formatForFile(this.from)
-                + " | " + TaskDateTime.formatForFile(this.to);
+        return appendRepeatFrequency(getBaseFileString() + " | " + TaskDateTime.formatForFile(this.from)
+                + " | " + TaskDateTime.formatForFile(this.to));
     }
 
     /**

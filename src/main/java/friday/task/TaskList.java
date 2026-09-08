@@ -1,8 +1,11 @@
 package friday.task;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import friday.FridayException;
 
@@ -10,6 +13,10 @@ import friday.FridayException;
  * Stores the task list and provides operations that modify it.
  */
 public class TaskList {
+    private static final Comparator<Task> REMINDER_DATE_TIME_COMPARATOR = Comparator
+            .comparing((Task task) -> task.getReminderDateTime().orElse(LocalDateTime.MAX))
+            .thenComparing(Task::getDescription);
+
     private final ArrayList<Task> tasks;
 
     /**
@@ -107,6 +114,64 @@ public class TaskList {
             }
         }
         return new TaskList(matchingTasks);
+    }
+
+    /**
+     * Sorts dated tasks chronologically, with tasks that have no date placed last.
+     */
+    public void sortByReminderDateTime() {
+        tasks.sort(REMINDER_DATE_TIME_COMPARATOR);
+    }
+
+    /**
+     * Marks an existing task as recurring.
+     *
+     * @param taskIndex zero-based index of the task
+     * @param repeatFrequency frequency to assign
+     * @return task that was marked as recurring
+     * @throws FridayException if the index is outside the task list
+     */
+    public Task setRepeatFrequency(int taskIndex, RepeatFrequency repeatFrequency) throws FridayException {
+        Task task = get(taskIndex);
+        task.setRepeatFrequency(repeatFrequency);
+        return task;
+    }
+
+    /**
+     * Returns dated tasks sorted chronologically.
+     *
+     * @return task list containing only tasks that have reminders
+     */
+    public TaskList getTasksWithReminders() {
+        ArrayList<Task> tasksWithReminders = new ArrayList<>();
+        for (Task task : tasks) {
+            if (task.getReminderDateTime().isPresent()) {
+                tasksWithReminders.add(task);
+            }
+        }
+        tasksWithReminders.sort(REMINDER_DATE_TIME_COMPARATOR);
+        return new TaskList(tasksWithReminders);
+    }
+
+    /**
+     * Returns tasks with reminder dates within the given period.
+     *
+     * @param start start of the reminder period
+     * @param end end of the reminder period
+     * @return task list containing reminders in the given period
+     */
+    public TaskList getUpcomingReminders(LocalDateTime start, LocalDateTime end) {
+        ArrayList<Task> upcomingReminders = new ArrayList<>();
+        for (Task task : tasks) {
+            Optional<LocalDateTime> reminderDateTime = task.getReminderDateTime();
+            if (reminderDateTime.isPresent()
+                    && !reminderDateTime.get().isBefore(start)
+                    && !reminderDateTime.get().isAfter(end)) {
+                upcomingReminders.add(task);
+            }
+        }
+        upcomingReminders.sort(REMINDER_DATE_TIME_COMPARATOR);
+        return new TaskList(upcomingReminders);
     }
 
     /**

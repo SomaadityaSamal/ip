@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -85,5 +86,49 @@ class TaskListTest {
 
         assertThrows(UnsupportedOperationException.class, () -> readOnlyTasks.add(new Todo("write notes")));
         assertEquals(1, tasks.size());
+    }
+
+    /**
+     * Tests that sorting uses date and time values and places undated tasks last.
+     *
+     * @throws FridayException if task creation fails unexpectedly
+     */
+    @Test
+    void sortByReminderDateTime_mixedTasks_sortsDatedTasksFirst() throws FridayException {
+        TaskList tasks = new TaskList();
+        Deadline laterDeadline = new Deadline("later task", "5/12/2025 1800");
+        Todo todo = new Todo("floating task");
+        Deadline earlierDeadline = new Deadline("earlier task", "2/12/2025 1800");
+        tasks.add(laterDeadline);
+        tasks.add(todo);
+        tasks.add(earlierDeadline);
+
+        tasks.sortByReminderDateTime();
+
+        assertSame(earlierDeadline, tasks.get(0));
+        assertSame(laterDeadline, tasks.get(1));
+        assertSame(todo, tasks.get(2));
+    }
+
+    /**
+     * Tests that upcoming reminders include only dated tasks inside the period.
+     *
+     * @throws FridayException if task access or creation fails unexpectedly
+     */
+    @Test
+    void getUpcomingReminders_mixedTasks_returnsOnlyTasksWithinPeriod() throws FridayException {
+        TaskList tasks = new TaskList();
+        Deadline dueSoon = new Deadline("due soon", "2/12/2025 1800");
+        Deadline dueLater = new Deadline("due later", "5/12/2025 1800");
+        tasks.add(dueLater);
+        tasks.add(new Todo("floating task"));
+        tasks.add(dueSoon);
+
+        TaskList reminders = tasks.getUpcomingReminders(
+                LocalDateTime.of(2025, 12, 1, 0, 0),
+                LocalDateTime.of(2025, 12, 3, 0, 0));
+
+        assertEquals(1, reminders.size());
+        assertSame(dueSoon, reminders.get(0));
     }
 }
