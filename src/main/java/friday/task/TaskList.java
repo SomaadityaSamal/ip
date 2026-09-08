@@ -24,8 +24,8 @@ public class TaskList {
      *
      * @param tasks initial tasks in the task list
      */
-    public TaskList(ArrayList<Task> tasks) {
-        this.tasks = tasks;
+    public TaskList(List<Task> tasks) {
+        this.tasks = new ArrayList<>(tasks);
     }
 
     /**

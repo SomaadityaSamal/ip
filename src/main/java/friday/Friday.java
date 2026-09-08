@@ -1,6 +1,7 @@
 package friday;
 
 import java.nio.file.Path;
+import java.util.Locale;
 import java.util.Scanner;
 
 import friday.storage.Storage;
@@ -12,6 +13,13 @@ import friday.task.TaskList;
  */
 public class Friday {
     private static final String DEFAULT_FILE_PATH = "data/duke.txt";
+    private static final String COMMAND_BYE = "bye";
+    private static final String COMMAND_DELETE = "delete";
+    private static final String COMMAND_FIND = "find";
+    private static final String COMMAND_HELP = "help";
+    private static final String COMMAND_LIST = "list";
+    private static final String COMMAND_MARK = "mark";
+    private static final String COMMAND_UNMARK = "unmark";
 
     private final Storage storage;
     private final TaskList tasks;
@@ -41,7 +49,7 @@ public class Friday {
 
             String input = rawInput.trim();
             System.out.println(getResponse(input));
-            if (input.equals("bye")) {
+            if (isExitCommand(input)) {
                 break;
             }
         }
@@ -66,7 +74,7 @@ public class Friday {
         assert input != null : "User input should not be null";
 
         String trimmedInput = input.trim();
-        if (trimmedInput.equalsIgnoreCase("bye")) {
+        if (isExitCommand(trimmedInput)) {
             return ui.getBye();
         }
 
@@ -102,41 +110,47 @@ public class Friday {
         String details = Parser.getDetails(input);
         assert !command.isBlank() : "Parsed command should not be blank";
 
-        if (command.equalsIgnoreCase("help")) {
+        String normalizedCommand = command.toLowerCase(Locale.ROOT);
+
+        if (normalizedCommand.equals(COMMAND_HELP)) {
             return ui.getHelp();
         }
 
-        if (command.equalsIgnoreCase("list")) {
+        if (normalizedCommand.equals(COMMAND_LIST)) {
             return ui.getTaskList(tasks);
         }
 
-        if (command.equalsIgnoreCase("mark")) {
+        if (normalizedCommand.equals(COMMAND_MARK)) {
             Task task = tasks.mark(Parser.parseTaskNumber(details));
             storage.save(tasks);
             return ui.getTaskMarked(task);
         }
 
-        if (command.equalsIgnoreCase("unmark")) {
+        if (normalizedCommand.equals(COMMAND_UNMARK)) {
             Task task = tasks.unmark(Parser.parseTaskNumber(details));
             storage.save(tasks);
             return ui.getTaskUnmarked(task);
         }
 
-        if (command.equalsIgnoreCase("delete")) {
+        if (normalizedCommand.equals(COMMAND_DELETE)) {
             Task removedTask = tasks.delete(Parser.parseTaskNumber(details));
             storage.save(tasks);
             return ui.getTaskDeleted(removedTask, tasks.size());
         }
 
-        if (command.equalsIgnoreCase("find")) {
+        if (normalizedCommand.equals(COMMAND_FIND)) {
             TaskList matchingTasks = tasks.find(Parser.parseKeyword(details));
             return ui.getMatchingTasks(matchingTasks);
         }
 
-        Task task = Parser.parseTask(command, details);
+        Task task = Parser.parseTask(normalizedCommand, details);
         assert task != null : "Parser should return a task for add commands";
         tasks.add(task);
         storage.save(tasks);
         return ui.getTaskAdded(task, tasks.size());
+    }
+
+    private boolean isExitCommand(String input) {
+        return input.equalsIgnoreCase(COMMAND_BYE);
     }
 }

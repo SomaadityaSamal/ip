@@ -1,5 +1,7 @@
 package friday;
 
+import java.util.List;
+
 import friday.task.Task;
 import friday.task.TaskList;
 
@@ -60,19 +62,7 @@ public class Ui {
      * @return task list message
      */
     public String getTaskList(TaskList tasks) {
-        StringBuilder response = new StringBuilder(LINE)
-                .append("\n")
-                .append(" Here are the tasks in your list:");
-        for (int i = 0; i < tasks.asList().size(); i++) {
-            response.append("\n")
-                    .append(" ")
-                    .append(i + 1)
-                    .append(".")
-                    .append(tasks.asList().get(i));
-        }
-        return response.append("\n")
-                .append(LINE)
-                .toString();
+        return getIndexedTaskList(" Here are the tasks in your list:", tasks);
     }
 
     /**
@@ -91,15 +81,20 @@ public class Ui {
      * @return matching tasks message
      */
     public String getMatchingTasks(TaskList tasks) {
+        return getIndexedTaskList(" Here are the matching tasks in your list:", tasks);
+    }
+
+    private String getIndexedTaskList(String heading, TaskList tasks) {
+        List<Task> taskList = tasks.asList();
         StringBuilder response = new StringBuilder(LINE)
                 .append("\n")
-                .append(" Here are the matching tasks in your list:");
-        for (int i = 0; i < tasks.asList().size(); i++) {
+                .append(heading);
+        for (int i = 0; i < taskList.size(); i++) {
             response.append("\n")
                     .append(" ")
                     .append(i + 1)
                     .append(".")
-                    .append(tasks.asList().get(i));
+                    .append(taskList.get(i));
         }
         return response.append("\n")
                 .append(LINE)
@@ -237,13 +232,18 @@ public class Ui {
         showError("Sorry, I could not load saved tasks. Starting with an empty list.");
     }
 
+    /**
+     * Returns the help message that lists available commands.
+     *
+     * @return help message
+     */
     public String getHelp() {
         return LINE + "\n"
                 + " Here are the commands you can use:\n"
                 + " 1. list - shows all tasks in the list\n"
                 + " 2. todo <description> - adds a todo task\n"
                 + " 3. deadline <description> /by <date> - adds a deadline task\n"
-                + " 4. event <description> /at <date> - adds an event task\n"
+                + " 4. event <description> /from <date> /to <date> - adds an event task\n"
                 + " 5. mark <task number> - marks a task as done\n"
                 + " 6. unmark <task number> - marks a task as not done\n"
                 + " 7. delete <task number> - deletes a task from the list\n"
