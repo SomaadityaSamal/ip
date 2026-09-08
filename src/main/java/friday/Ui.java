@@ -15,7 +15,7 @@ public class Ui {
      * @return welcome message
      */
     public String getWelcome() {
-        String banner = "_____ ____  ___ ____    _ __   __\n"
+        String banner = "    _____ ____  ___ ____    _ __   __\n"
                          + "|  ___|  _ \\|_ _|  _ \\  / \\\\ \\ / /\n"
                          + "| |_  | |_) || || | | |/ _ \\\\ V / \n"
                          + "|  _| |  _ < | || |_| / ___ \\| |  \n"
