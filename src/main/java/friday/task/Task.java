@@ -4,7 +4,7 @@ package friday.task;
  * Represents a task in Friday's task list.
  */
 public class Task {
-    protected String description;
+    protected final String description;
     private boolean isDone;
 
     /**

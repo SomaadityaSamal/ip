@@ -60,10 +60,10 @@ class ParserTest {
      */
     @Test
     void parseTask_eventEndNotAfterStart_throwsFridayException() {
-        assertThrows(FridayException.class,
-                () -> Parser.parseTask("event", "project meeting /from 3/12/2025 1600 /to 3/12/2025 1400"));
-        assertThrows(FridayException.class,
-                () -> Parser.parseTask("event", "project meeting /from 3/12/2025 1400 /to 3/12/2025 1400"));
+        assertThrows(FridayException.class, () -> Parser.parseTask("event",
+                "project meeting /from 3/12/2025 1600 /to 3/12/2025 1400"));
+        assertThrows(FridayException.class, () -> Parser.parseTask("event",
+                "project meeting /from 3/12/2025 1400 /to 3/12/2025 1400"));
     }
 
     /**
