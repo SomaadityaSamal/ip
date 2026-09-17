@@ -3,6 +3,7 @@ package friday.task;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 
 import friday.FridayException;
 
@@ -10,8 +11,10 @@ import friday.FridayException;
  * Parses and formats task date-time values consistently.
  */
 public final class TaskDateTime {
-    private static final DateTimeFormatter FILE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
-    private static final DateTimeFormatter INPUT_FORMAT = DateTimeFormatter.ofPattern("d/M/yyyy HHmm");
+    private static final DateTimeFormatter FILE_FORMAT = DateTimeFormatter.ofPattern("uuuu-MM-dd HHmm")
+            .withResolverStyle(ResolverStyle.STRICT);
+    private static final DateTimeFormatter INPUT_FORMAT = DateTimeFormatter.ofPattern("d/M/uuuu HHmm")
+            .withResolverStyle(ResolverStyle.STRICT);
     private static final DateTimeFormatter DISPLAY_FORMAT = DateTimeFormatter.ofPattern("MMM dd yyyy h:mma");
     private static final String INVALID_DATE_TIME_MESSAGE =
             "Apologies, please use the date format yyyy-MM-dd HHmm or d/M/yyyy HHmm";

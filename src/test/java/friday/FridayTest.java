@@ -1,5 +1,6 @@
 package friday;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Path;
@@ -108,5 +109,35 @@ class FridayTest {
 
         assertTrue(response.contains("does not accept extra details"));
         assertTrue(friday.wasLastResponseError());
+    }
+
+    @Test
+    void getResponse_taskLifecycleCommands_updateTheSelectedTask() {
+        Friday friday = new Friday(tempDir.resolve("duke.txt").toString());
+        friday.getResponse("todo read book");
+
+        assertTrue(friday.getResponse("mark 1").contains("[T][X] read book"));
+        assertTrue(friday.getResponse("unmark 1").contains("[T][ ] read book"));
+        assertTrue(friday.getResponse("find book").contains("read book"));
+        assertTrue(friday.getResponse("delete 1").contains("0 tasks"));
+    }
+
+    @Test
+    void getResponse_helpAndCaseInsensitiveCommands_returnSuccessfulResponses() {
+        Friday friday = new Friday(tempDir.resolve("duke.txt").toString());
+
+        assertTrue(friday.getResponse("HELP").contains("commands you can use"));
+        assertTrue(friday.getResponse("TODO read book").contains("read book"));
+        assertFalse(friday.wasLastResponseError());
+    }
+
+    @Test
+    void getResponse_invalidCommandAndTaskNumber_returnErrors() {
+        Friday friday = new Friday(tempDir.resolve("duke.txt").toString());
+
+        assertTrue(friday.getResponse("dance").contains("no clue"));
+        assertTrue(friday.wasLastResponseError());
+        assertTrue(friday.getResponse("mark 9").contains("not in the list"));
+        assertTrue(friday.getResponse("delete one").contains("valid task number"));
     }
 }

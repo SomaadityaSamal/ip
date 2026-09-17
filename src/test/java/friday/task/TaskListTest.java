@@ -131,4 +131,36 @@ class TaskListTest {
         assertEquals(1, reminders.size());
         assertSame(dueSoon, reminders.get(0));
     }
+
+    @Test
+    void markAndUnmark_validIndex_updatesSelectedTask() throws FridayException {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("read book"));
+
+        assertEquals("X", tasks.mark(0).getStatusIcon());
+        assertEquals(" ", tasks.unmark(0).getStatusIcon());
+    }
+
+    @Test
+    void getDeleteAndRepeat_invalidIndex_throwFridayException() {
+        TaskList tasks = new TaskList();
+
+        assertThrows(FridayException.class, () -> tasks.get(-1));
+        assertThrows(FridayException.class, () -> tasks.get(0));
+        assertThrows(FridayException.class, () -> tasks.delete(0));
+        assertThrows(FridayException.class, () -> tasks.setRepeatFrequency(0, RepeatFrequency.DAILY));
+    }
+
+    @Test
+    void getTasksWithReminders_mixedTasks_returnsOnlyDatedTasks() throws FridayException {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("read book"));
+        Deadline deadline = new Deadline("submit report", "2/12/2025 1800");
+        tasks.add(deadline);
+
+        TaskList reminders = tasks.getTasksWithReminders();
+
+        assertEquals(1, reminders.size());
+        assertSame(deadline, reminders.get(0));
+    }
 }
