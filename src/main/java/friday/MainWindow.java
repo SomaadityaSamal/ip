@@ -30,7 +30,6 @@ public class MainWindow extends AnchorPane {
     private Button sendButton;
 
     private Friday friday;
-    private final Image userImage = new Image(getClass().getResourceAsStream("/images/DaUser2.jpeg"));
     private final Image fridayImage = new Image(getClass().getResourceAsStream("/images/DaDuke2.jpeg"));
 
     /**
@@ -67,8 +66,8 @@ public class MainWindow extends AnchorPane {
 
         String response = friday.getResponse(input);
         dialogContainer.getChildren().addAll(
-                DialogBox.getUserDialog(input, userImage),
-                DialogBox.getFridayDialog(response, fridayImage)
+                DialogBox.getUserDialog(input),
+                DialogBox.getFridayDialog(response, fridayImage, friday.wasLastResponseError())
         );
         userInput.clear();
 

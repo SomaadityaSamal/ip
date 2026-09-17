@@ -30,6 +30,7 @@ public class Friday {
     private final Storage storage;
     private final TaskList tasks;
     private final Ui ui;
+    private boolean lastResponseWasError;
 
     /**
      * Creates a Friday chatbot that stores tasks at the given file path.
@@ -81,14 +82,27 @@ public class Friday {
 
         String trimmedInput = input.trim();
         if (isExitCommand(trimmedInput)) {
+            lastResponseWasError = false;
             return ui.getBye();
         }
 
         try {
-            return handleCommand(trimmedInput);
+            String response = handleCommand(trimmedInput);
+            lastResponseWasError = false;
+            return response;
         } catch (FridayException e) {
+            lastResponseWasError = true;
             return ui.getError(e.getMessage());
         }
+    }
+
+    /**
+     * Returns whether the most recent response reports an invalid command or failed operation.
+     *
+     * @return true if the most recent response is an error
+     */
+    public boolean wasLastResponseError() {
+        return lastResponseWasError;
     }
 
     /**

@@ -1,18 +1,31 @@
 .label {
-    background: white;
-    -fx-background-color: background;
-    -fx-border-color: #d55e00 #009e73 #cc79a7 #0072b2;
-    -fx-border-width: 2px;
-    -fx-background-radius: 1em 1em 0 1em;
-    -fx-border-radius: 1em 1em 0 1em;
-    -fx-text-fill: ladder(background, white 49%, black 50%);
+    -fx-background-color: rgba(255, 255, 255, 0.94);
+    -fx-background-radius: 14px 14px 14px 4px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.20), 8, 0.1, 0, 2);
+    -fx-font-family: "Menlo", "Monaco", "Consolas", monospace;
+    -fx-font-size: 13px;
+    -fx-text-fill: #202124;
 }
 
 .reply-label {
-    -fx-background-radius: 1em 1em 1em 0;
-    -fx-border-radius: 1em 1em 1em 0;
+    -fx-background-color: rgba(255, 255, 255, 0.94);
+}
+
+.user-label {
+    -fx-background-color: #2aabee;
+    -fx-background-radius: 14px 14px 4px 14px;
+    -fx-font-family: "Arial";
+    -fx-text-fill: white;
+}
+
+.error-label {
+    -fx-background-color: #ffe7e7;
+    -fx-border-color: #d94a4a;
+    -fx-border-radius: 14px 14px 14px 4px;
+    -fx-border-width: 1px;
+    -fx-text-fill: #8b1e1e;
 }
 
 #displayPicture {
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0.5, 5, 5);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.30), 6, 0.2, 0, 2);
 }
