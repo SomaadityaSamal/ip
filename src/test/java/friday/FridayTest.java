@@ -88,4 +88,25 @@ class FridayTest {
         assertTrue(welcomeMessage.contains("Reminders due in the next 2 days"));
         assertTrue(welcomeMessage.contains("submit report"));
     }
+
+    @Test
+    void getResponse_blankInput_returnsErrorAndMarksResponseAsError() {
+        Friday friday = new Friday(tempDir.resolve("duke.txt").toString());
+
+        String response = friday.getResponse("   ");
+
+        assertTrue(response.contains("please enter a command"));
+        assertTrue(friday.wasLastResponseError());
+    }
+
+    @Test
+    void getResponse_extraDetailsForList_returnsErrorWithoutChangingTasks() {
+        Friday friday = new Friday(tempDir.resolve("duke.txt").toString());
+        friday.getResponse("todo read book");
+
+        String response = friday.getResponse("list please");
+
+        assertTrue(response.contains("does not accept extra details"));
+        assertTrue(friday.wasLastResponseError());
+    }
 }
