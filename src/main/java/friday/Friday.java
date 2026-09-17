@@ -81,6 +81,10 @@ public class Friday {
         assert input != null : "User input should not be null";
 
         String trimmedInput = input.trim();
+        if (trimmedInput.isBlank()) {
+            lastResponseWasError = true;
+            return ui.getError("Apologies, please enter a command sir");
+        }
         if (isExitCommand(trimmedInput)) {
             lastResponseWasError = false;
             return ui.getBye();
@@ -135,10 +139,12 @@ public class Friday {
         String normalizedCommand = command.toLowerCase(Locale.ROOT);
 
         if (normalizedCommand.equals(COMMAND_HELP)) {
+            requireNoDetails(normalizedCommand, details);
             return ui.getHelp();
         }
 
         if (normalizedCommand.equals(COMMAND_LIST)) {
+            requireNoDetails(normalizedCommand, details);
             return ui.getTaskList(tasks);
         }
 
@@ -166,6 +172,7 @@ public class Friday {
         }
 
         if (normalizedCommand.equals(COMMAND_SORT)) {
+            requireNoDetails(normalizedCommand, details);
             tasks.sortByReminderDateTime();
             storage.save(tasks);
             return ui.getTasksSorted(tasks);
@@ -180,6 +187,7 @@ public class Friday {
         }
 
         if (normalizedCommand.equals(COMMAND_REMINDERS)) {
+            requireNoDetails(normalizedCommand, details);
             return ui.getReminders(tasks.getTasksWithReminders());
         }
 
@@ -192,5 +200,11 @@ public class Friday {
 
     private boolean isExitCommand(String input) {
         return input.equalsIgnoreCase(COMMAND_BYE);
+    }
+
+    private void requireNoDetails(String command, String details) throws FridayException {
+        if (!details.isBlank()) {
+            throw new FridayException("Apologies, the " + command + " command does not accept extra details sir");
+        }
     }
 }

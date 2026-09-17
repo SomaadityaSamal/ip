@@ -35,18 +35,24 @@ public class Storage {
      */
     public ArrayList<Task> load() throws FridayException {
         ArrayList<Task> tasks = new ArrayList<>();
-        if (!Files.exists(filePath)) {
-            return tasks;
-        }
-
         try {
-            for (String line : Files.readAllLines(filePath, StandardCharsets.UTF_8)) {
+            if (!Files.exists(filePath)) {
+                return tasks;
+            }
+
+            List<String> lines = Files.readAllLines(filePath, StandardCharsets.UTF_8);
+            for (int i = 0; i < lines.size(); i++) {
+                String line = lines.get(i);
                 if (!line.isBlank()) {
-                    tasks.add(Parser.parseSavedTask(line));
+                    try {
+                        tasks.add(Parser.parseSavedTask(line));
+                    } catch (FridayException e) {
+                        throw new FridayException("Saved task on line " + (i + 1) + " is invalid: " + e.getMessage());
+                    }
                 }
             }
             return tasks;
-        } catch (IOException e) {
+        } catch (IOException | SecurityException e) {
             throw new FridayException("Sorry, I could not load saved tasks. Starting with an empty list.");
         }
     }
@@ -59,13 +65,16 @@ public class Storage {
      */
     public void save(TaskList tasks) throws FridayException {
         try {
-            Files.createDirectories(filePath.getParent());
+            Path parentDirectory = filePath.getParent();
+            if (parentDirectory != null) {
+                Files.createDirectories(parentDirectory);
+            }
             List<String> lines = new ArrayList<>();
             for (Task task : tasks.asList()) {
                 lines.add(task.toFileString());
             }
             Files.write(filePath, lines, StandardCharsets.UTF_8);
-        } catch (IOException e) {
+        } catch (IOException | SecurityException e) {
             throw new FridayException("Sorry, I could not save your tasks to the hard disk.");
         }
     }

@@ -1,5 +1,8 @@
 package friday;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import friday.task.Deadline;
 import friday.task.Event;
 import friday.task.RepeatFrequency;
@@ -10,6 +13,8 @@ import friday.task.Todo;
  * Parses user input and saved task lines.
  */
 public class Parser {
+    private static final String DEADLINE_USAGE = "deadline <description> /by <date and time>";
+    private static final String EVENT_USAGE = "event <description> /from <date and time> /to <date and time>";
 
     /**
      * Returns the first word of the user input as the command.
@@ -18,7 +23,11 @@ public class Parser {
      * @return command word from the input
      */
     public static String getCommand(String input) {
-        return input.split(" ", 2)[0];
+        String trimmedInput = input.trim();
+        if (trimmedInput.isEmpty()) {
+            return "";
+        }
+        return trimmedInput.split("\\s+", 2)[0];
     }
 
     /**
@@ -28,7 +37,7 @@ public class Parser {
      * @return details after the command word, or an empty string if there are none
      */
     public static String getDetails(String input) {
-        String[] parts = input.split(" ", 2);
+        String[] parts = input.trim().split("\\s+", 2);
         return parts.length > 1 ? parts[1] : "";
     }
 
@@ -121,17 +130,22 @@ public class Parser {
             throw new FridayException("Invalid saved task format");
         }
 
+        validateSavedStatus(parts[1]);
+        if (parts[2].isBlank()) {
+            throw new FridayException("Saved task description cannot be blank");
+        }
+
         Task task;
         String taskType = parts[0];
         String description = parts[2];
-        if (taskType.equals("T")) {
+        if (taskType.equals("T") && hasExpectedSavedFields(parts, 3)) {
             task = new Todo(description);
-        } else if (taskType.equals("D") && parts.length >= 4) {
+        } else if (taskType.equals("D") && hasExpectedSavedFields(parts, 4)) {
             task = new Deadline(description, parts[3]);
-        } else if (taskType.equals("E") && parts.length >= 5) {
+        } else if (taskType.equals("E") && hasExpectedSavedFields(parts, 5)) {
             task = new Event(description, parts[3], parts[4]);
         } else {
-            throw new FridayException("Invalid saved task type");
+            throw new FridayException("Invalid saved task type or field count");
         }
 
         if (parts[1].equals("1")) {
@@ -142,17 +156,15 @@ public class Parser {
     }
 
     private static Task parseTodo(String details) throws FridayException {
-        if (details.isBlank()) {
+        String description = details.trim();
+        if (description.isBlank()) {
             throw new FridayException("Apologies, todo cannot have an empty description sir");
         }
-        return new Todo(details);
+        return new Todo(description);
     }
 
     private static Task parseDeadline(String details) throws FridayException {
-        String[] deadlineParts = splitDetails(details, "/by");
-        if (deadlineParts.length < 2) {
-            throw new FridayException("Apologies i have no clue what that means");
-        }
+        String[] deadlineParts = splitDetails(details, "/by", DEADLINE_USAGE);
         if (deadlineParts[0].isBlank()) {
             throw new FridayException("Apologies, deadline cannot have an empty description sir");
         }
@@ -160,34 +172,38 @@ public class Parser {
     }
 
     private static Task parseEvent(String details) throws FridayException {
-        String[] eventParts = splitDetails(details, "/from");
-        if (eventParts.length < 2) {
-            throw new FridayException("Apologies i have no clue what that means");
-        }
+        String[] eventParts = splitDetails(details, "/from", EVENT_USAGE);
         if (eventParts[0].isBlank()) {
             throw new FridayException("Apologies, event cannot have an empty description sir");
         }
 
-        String[] timeParts = splitDetails(eventParts[1], "/to");
-        if (timeParts.length < 2) {
-            throw new FridayException("Apologies i have no clue what that means");
-        }
+        String[] timeParts = splitDetails(eventParts[1], "/to", EVENT_USAGE);
         return new Event(eventParts[0], timeParts[0], timeParts[1]);
     }
 
-    private static String[] splitDetails(String details, String marker) {
-        int markerIndex = details.indexOf(marker);
-        if (markerIndex < 0) {
-            return new String[] { details };
+    private static String[] splitDetails(String details, String marker, String usage) throws FridayException {
+        Pattern markerPattern = Pattern.compile("(?<!\\S)" + Pattern.quote(marker) + "(?!\\S)");
+        Matcher matcher = markerPattern.matcher(details);
+        if (!matcher.find()) {
+            throw new FridayException("Apologies, please use: " + usage);
         }
 
-        String description = details.substring(0, markerIndex).trim();
-        String dateOrTime = details.substring(markerIndex + marker.length()).trim();
+        int markerStart = matcher.start();
+        int markerEnd = matcher.end();
+        if (matcher.find()) {
+            throw new FridayException("Apologies, " + marker + " can only be specified once sir");
+        }
+
+        String description = details.substring(0, markerStart).trim();
+        String dateOrTime = details.substring(markerEnd).trim();
+        if (dateOrTime.isBlank()) {
+            throw new FridayException("Apologies, please provide a value after " + marker + " sir");
+        }
         return new String[] { description, dateOrTime };
     }
 
     private static String[] splitRepeatDetails(String details) throws FridayException {
-        String[] parts = details.trim().split(" ", 2);
+        String[] parts = details.trim().split("\\s+", 2);
         if (parts.length < 2 || parts[0].isBlank() || parts[1].isBlank()) {
             throw new FridayException("Apologies, please use repeat <task number> <frequency> sir");
         }
@@ -199,6 +215,17 @@ public class Parser {
         String possibleRepeatFrequency = parts[parts.length - 1];
         if (possibleRepeatFrequency.startsWith(repeatPrefix)) {
             task.setRepeatFrequency(RepeatFrequency.parse(possibleRepeatFrequency.substring(repeatPrefix.length())));
+        }
+    }
+
+    private static boolean hasExpectedSavedFields(String[] parts, int requiredFieldCount) {
+        return parts.length == requiredFieldCount
+                || parts.length == requiredFieldCount + 1 && parts[parts.length - 1].startsWith("repeat:");
+    }
+
+    private static void validateSavedStatus(String status) throws FridayException {
+        if (!status.equals("0") && !status.equals("1")) {
+            throw new FridayException("Saved task status must be 0 or 1");
         }
     }
 }

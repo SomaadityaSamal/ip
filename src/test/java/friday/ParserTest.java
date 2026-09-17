@@ -100,4 +100,27 @@ class ParserTest {
         assertThrows(FridayException.class, () -> Parser.parseKeyword(""));
         assertThrows(FridayException.class, () -> Parser.parseKeyword("   "));
     }
+
+    @Test
+    void getCommandAndDetails_irregularWhitespace_returnsNormalizedParts() {
+        assertEquals("deadline", Parser.getCommand("  deadline   return book /by 2/12/2025 1800  "));
+        assertEquals("return book /by 2/12/2025 1800", Parser.getDetails(
+                "  deadline   return book /by 2/12/2025 1800  "));
+    }
+
+    @Test
+    void parseTask_repeatedOrEmptyMarkers_throwsFridayException() {
+        assertThrows(FridayException.class, () -> Parser.parseTask(
+                "deadline", "return book /by 2/12/2025 1800 /by 3/12/2025 1800"));
+        assertThrows(FridayException.class, () -> Parser.parseTask("deadline", "return book /by"));
+        assertThrows(FridayException.class, () -> Parser.parseTask(
+                "event", "meeting /from 2/12/2025 1800 /to"));
+    }
+
+    @Test
+    void parseSavedTask_invalidStatusOrExtraFields_throwsFridayException() {
+        assertThrows(FridayException.class, () -> Parser.parseSavedTask("T | yes | read book"));
+        assertThrows(FridayException.class, () -> Parser.parseSavedTask("T | 0 | read book | unexpected"));
+        assertThrows(FridayException.class, () -> Parser.parseSavedTask("D | 0 | task | 2025-12-02 1800 | extra"));
+    }
 }
