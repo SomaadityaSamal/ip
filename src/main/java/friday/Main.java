@@ -26,7 +26,7 @@ public class Main extends Application {
         Scene scene = new Scene(mainWindow);
 
         fxmlLoader.<MainWindow>getController().setFriday(friday);
-        stage.setTitle("Friday");
+        stage.setTitle("FRIDAY Assistant");
         stage.setScene(scene);
         stage.setMinHeight(400);
         stage.setMinWidth(350);
