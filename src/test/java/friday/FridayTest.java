@@ -26,9 +26,9 @@ class FridayTest {
         String addResponse = friday.getResponse("todo read book");
         String listResponse = friday.getResponse("list");
 
-        assertTrue(addResponse.contains("Got it. I've added this task:"));
+        assertTrue(addResponse.contains("Certainly, sir. I have added this task:"));
         assertTrue(addResponse.contains("[T][ ] read book"));
-        assertTrue(listResponse.contains("1.[T][ ] read book"));
+        assertTrue(listResponse.contains("1. [T][ ] read book"));
     }
 
     @Test
@@ -37,7 +37,7 @@ class FridayTest {
 
         String response = friday.getResponse("bye");
 
-        assertTrue(response.contains("Bye. Hope to see you again soon!"));
+        assertTrue(response.contains("Powering down. I remain at your service, sir."));
     }
 
     @Test
@@ -60,7 +60,7 @@ class FridayTest {
         friday.getResponse("todo submit report");
         String response = friday.getResponse("repeat 1 weekly");
 
-        assertTrue(response.contains("This task now repeats weekly"));
+        assertTrue(response.contains("This task will now repeat weekly"));
         assertTrue(response.contains("[T][ ] submit report (repeats: weekly)"));
     }
 
@@ -73,7 +73,7 @@ class FridayTest {
         friday.getResponse("deadline earlier task /by 2/12/2025 1800");
         String response = friday.getResponse("reminders");
 
-        assertTrue(response.contains("Here are your reminders, sorted chronologically"));
+        assertTrue(response.contains("Your reminders, arranged chronologically"));
         assertTrue(response.indexOf("earlier task") < response.indexOf("later task"));
         assertTrue(!response.contains("floating task"));
     }
@@ -86,7 +86,7 @@ class FridayTest {
         friday.getResponse("deadline submit report /by " + reminderDateTime);
         String welcomeMessage = friday.getWelcome();
 
-        assertTrue(welcomeMessage.contains("Reminders due in the next 2 days"));
+        assertTrue(welcomeMessage.contains("Items requiring attention within 2 days"));
         assertTrue(welcomeMessage.contains("submit report"));
     }
 
@@ -126,7 +126,7 @@ class FridayTest {
     void getResponse_helpAndCaseInsensitiveCommands_returnSuccessfulResponses() {
         Friday friday = new Friday(tempDir.resolve("duke.txt").toString());
 
-        assertTrue(friday.getResponse("HELP").contains("commands you can use"));
+        assertTrue(friday.getResponse("HELP").contains("Available directives"));
         assertTrue(friday.getResponse("TODO read book").contains("read book"));
         assertFalse(friday.wasLastResponseError());
     }

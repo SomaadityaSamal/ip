@@ -19,7 +19,7 @@ class UiTest {
         Todo task = new Todo("read book");
 
         assertTrue(ui.getTaskAdded(task, 1).contains("read book"));
-        assertTrue(ui.getTaskAdded(task, 1).contains("1 tasks"));
+        assertTrue(ui.getTaskAdded(task, 1).contains("1 task"));
         assertTrue(ui.getTaskMarked(task).contains("read book"));
         assertTrue(ui.getTaskUnmarked(task).contains("read book"));
         assertTrue(ui.getTaskDeleted(task, 0).contains("0 tasks"));
@@ -32,18 +32,18 @@ class UiTest {
         TaskList tasks = new TaskList();
         tasks.add(new Todo("read book"));
 
-        assertTrue(ui.getTaskList(tasks).contains("1.[T][ ] read book"));
+        assertTrue(ui.getTaskList(tasks).contains("1. [T][ ] read book"));
         assertTrue(ui.getMatchingTasks(tasks).contains("matching tasks"));
-        assertTrue(ui.getTasksSorted(tasks).contains("sorted by date and time"));
-        assertTrue(ui.getReminders(new TaskList()).contains("do not have any reminders"));
+        assertTrue(ui.getTasksSorted(tasks).contains("arranged chronologically"));
+        assertTrue(ui.getReminders(new TaskList()).contains("no dated reminders"));
     }
 
     @Test
     void generalResponses_includeExpectedGuidance() {
         Ui ui = new Ui();
 
-        assertTrue(ui.getWelcome().contains("What can I do for you"));
-        assertTrue(ui.getBye().contains("Bye"));
+        assertTrue(ui.getWelcome().contains("All systems are online"));
+        assertTrue(ui.getBye().contains("Powering down"));
         assertTrue(ui.getError("invalid input").contains("invalid input"));
         assertTrue(ui.getHelp().contains("todo <description>"));
     }

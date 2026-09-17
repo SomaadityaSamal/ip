@@ -10,8 +10,6 @@ import friday.task.TaskList;
  * Handles all text shown to the user.
  */
 public class Ui {
-    private static final String LINE = "____________________________________________________________";
-
     /**
      * Returns the welcome message.
      *
@@ -35,10 +33,8 @@ public class Ui {
                          + "|_|   |_| \\_\\___|____/_/   \\_\\_|";
 
         return banner + "\n"
-                + "...\n"
                 + "\n"
-                + "What can I do for you sir?\n"
-                + LINE
+                + "All systems are online, sir. How may I assist?"
                 + getStartupReminderText(upcomingReminders);
     }
 
@@ -55,9 +51,7 @@ public class Ui {
      * @return goodbye message
      */
     public String getBye() {
-        return LINE + "\n"
-                + "Bye. Hope to see you again soon!" + "\n"
-                + LINE;
+        return "Powering down. I remain at your service, sir.";
     }
 
     /**
@@ -74,7 +68,7 @@ public class Ui {
      * @return task list message
      */
     public String getTaskList(TaskList tasks) {
-        return getIndexedTaskList(" Here are the tasks in your list:", tasks);
+        return getIndexedTaskList("Your current task register, sir:", tasks);
     }
 
     /**
@@ -93,7 +87,7 @@ public class Ui {
      * @return matching tasks message
      */
     public String getMatchingTasks(TaskList tasks) {
-        return getIndexedTaskList(" Here are the matching tasks in your list:", tasks);
+        return getIndexedTaskList("I found the following matching tasks, sir:", tasks);
     }
 
     /**
@@ -103,7 +97,7 @@ public class Ui {
      * @return sorted task list message
      */
     public String getTasksSorted(TaskList tasks) {
-        return getIndexedTaskList(" Here are your tasks sorted by date and time:", tasks);
+        return getIndexedTaskList("Your tasks are now arranged chronologically, sir:", tasks);
     }
 
     /**
@@ -114,28 +108,21 @@ public class Ui {
      */
     public String getReminders(TaskList tasks) {
         if (tasks.size() == 0) {
-            return LINE + "\n"
-                    + " You do not have any reminders yet.\n"
-                    + LINE;
+            return "Your schedule contains no dated reminders, sir.";
         }
-        return getIndexedTaskList(" Here are your reminders, sorted chronologically:", tasks);
+        return getIndexedTaskList("Your reminders, arranged chronologically, sir:", tasks);
     }
 
     private String getIndexedTaskList(String heading, TaskList tasks) {
         List<Task> taskList = tasks.asList();
-        StringBuilder response = new StringBuilder(LINE)
-                .append("\n")
-                .append(heading);
+        StringBuilder response = new StringBuilder(heading);
         for (int i = 0; i < taskList.size(); i++) {
             response.append("\n")
-                    .append(" ")
                     .append(i + 1)
-                    .append(".")
+                    .append(". ")
                     .append(taskList.get(i));
         }
-        return response.append("\n")
-                .append(LINE)
-                .toString();
+        return response.toString();
     }
 
     /**
@@ -155,11 +142,9 @@ public class Ui {
      * @return task added message
      */
     public String getTaskAdded(Task task, int taskCount) {
-        return LINE + "\n"
-                + " Got it. I've added this task:\n"
-                + "   " + task + "\n"
-                + " Now you have " + taskCount + " tasks in the list.\n"
-                + LINE;
+        return "Certainly, sir. I have added this task:\n"
+                + task + "\n"
+                + "You now have " + formatTaskCount(taskCount) + " in the register.";
     }
 
     /**
@@ -179,10 +164,7 @@ public class Ui {
      * @return task marked message
      */
     public String getTaskMarked(Task task) {
-        return LINE + "\n"
-                + " Nice! I've marked this task as done:\n"
-                + "   " + task + "\n"
-                + LINE;
+        return "Consider it done, sir. I have marked this task as complete:\n" + task;
     }
 
     /**
@@ -201,10 +183,7 @@ public class Ui {
      * @return task unmarked message
      */
     public String getTaskUnmarked(Task task) {
-        return LINE + "\n"
-                + " OK, I've marked this task as not done yet:\n"
-                + "   " + task + "\n"
-                + LINE;
+        return "Understood, sir. I have returned this task to active status:\n" + task;
     }
 
     /**
@@ -224,11 +203,9 @@ public class Ui {
      * @return task deleted message
      */
     public String getTaskDeleted(Task task, int taskCount) {
-        return LINE + "\n"
-                + " Noted. I've removed this task:\n"
-                + "   " + task + "\n"
-                + " Now you have " + taskCount + " tasks in the list.\n"
-                + LINE;
+        return "The task has been removed, sir:\n"
+                + task + "\n"
+                + "You now have " + formatTaskCount(taskCount) + " in the register.";
     }
 
     /**
@@ -239,10 +216,7 @@ public class Ui {
      * @return recurring task message
      */
     public String getTaskRepeated(Task task, RepeatFrequency repeatFrequency) {
-        return LINE + "\n"
-                + " Got it. This task now repeats " + repeatFrequency.getText() + ":\n"
-                + "   " + task + "\n"
-                + LINE;
+        return "Certainly, sir. This task will now repeat " + repeatFrequency.getText() + ":\n" + task;
     }
 
     /**
@@ -262,9 +236,7 @@ public class Ui {
      * @return formatted error message
      */
     public String getError(String message) {
-        return LINE + "\n"
-                + " " + message + "\n"
-                + LINE;
+        return "I am afraid I could not complete that request, sir.\n" + message;
     }
 
     /**
@@ -280,7 +252,7 @@ public class Ui {
      * Shows an error message for failed loading.
      */
     public void showLoadingError() {
-        showError("Sorry, I could not load saved tasks. Starting with an empty list.");
+        showError("The saved task file could not be read, so I have started with an empty register.");
     }
 
     /**
@@ -289,8 +261,7 @@ public class Ui {
      * @return help message
      */
     public String getHelp() {
-        return LINE + "\n"
-                + " Here are the commands you can use:\n"
+        return "Available directives, sir:\n"
                 + " 1. list - shows all tasks in the list\n"
                 + " 2. todo <description> - adds a todo task\n"
                 + " 3. deadline <description> /by <date> - adds a deadline task\n"
@@ -303,14 +274,17 @@ public class Ui {
                 + "10. repeat <task number> <frequency> - makes a task recurring\n"
                 + "11. reminders - shows dated tasks sorted chronologically\n"
                 + "12. help - shows this help message\n"
-                + "13. bye - exits the application\n"
-                + LINE;
+                + "13. bye - exits the application";
     }
 
     private String getStartupReminderText(TaskList upcomingReminders) {
         if (upcomingReminders.size() == 0) {
             return "";
         }
-        return "\n" + getIndexedTaskList(" Reminders due in the next 2 days:", upcomingReminders);
+        return "\n\n" + getIndexedTaskList("Items requiring attention within 2 days, sir:", upcomingReminders);
+    }
+
+    private String formatTaskCount(int taskCount) {
+        return taskCount + (taskCount == 1 ? " task" : " tasks");
     }
 }
