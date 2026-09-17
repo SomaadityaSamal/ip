@@ -1,24 +1,35 @@
 .root {
-    main-color: rgb(237, 255, 242);
+    main-color: #171717;
     -fx-background-color: main-color;
+    -fx-background-image: url("../images/chat-background.jpeg");
+    -fx-background-position: center center;
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: cover;
 }
 
 .text-field {
-    -fx-background-color: #d9ffe2;
-    -fx-font: 16px "Arial";
+    -fx-background-color: rgba(255, 255, 255, 0.96);
+    -fx-background-radius: 18px;
+    -fx-border-color: rgba(255, 255, 255, 0.45);
+    -fx-border-radius: 18px;
+    -fx-font: 14px "Arial";
+    -fx-padding: 0 14px;
 }
 
 .button {
-    -fx-background-color: mediumspringgreen;
-    -fx-font: bold 14px "Arial";
+    -fx-background-color: #2aabee;
+    -fx-background-radius: 24px;
+    -fx-cursor: hand;
+    -fx-font: bold 17px "Arial";
+    -fx-text-fill: white;
 }
 
 .button:hover {
-    -fx-background-color: cyan;
+    -fx-background-color: #229ed9;
 }
 
 .button:pressed {
-    -fx-background-color: orange;
+    -fx-background-color: #1688bc;
 }
 
 .scroll-pane,
@@ -28,11 +39,11 @@
 
 .scroll-bar {
     -fx-font-size: 10px;
-    -fx-background-color: main-color;
+    -fx-background-color: transparent;
 }
 
 .scroll-bar .thumb {
-    -fx-background-color: #ff9cb4;
+    -fx-background-color: rgba(255, 255, 255, 0.45);
     -fx-background-radius: 1em;
 }
 
