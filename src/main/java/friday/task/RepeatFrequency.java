@@ -1,5 +1,7 @@
 package friday.task;
 
+import java.time.DateTimeException;
+import java.time.LocalDateTime;
 import java.util.Locale;
 
 import friday.FridayException;
@@ -44,5 +46,20 @@ public enum RepeatFrequency {
      */
     public String getText() {
         return text;
+    }
+
+    /** Advances a date by one recurrence interval, clamping invalid month-end days. */
+    public LocalDateTime advance(LocalDateTime date) throws FridayException {
+        try {
+            return switch (this) {
+                case DAILY -> date.plusDays(1);
+                case WEEKLY -> date.plusWeeks(1);
+                case BIWEEKLY -> date.plusWeeks(2);
+                case MONTHLY -> date.plusMonths(1);
+                case YEARLY -> date.plusYears(1);
+            };
+        } catch (DateTimeException e) {
+            throw new FridayException("The next recurring date is outside the supported date range.");
+        }
     }
 }

@@ -33,6 +33,11 @@ public class Deadline extends Task {
         return "D";
     }
 
+    @Override
+    protected Task createNextOccurrence(RepeatFrequency frequency) throws FridayException {
+        return new Deadline(description, TaskDateTime.formatForFile(frequency.advance(by)));
+    }
+
     /**
      * Returns this deadline's due date and time.
      *

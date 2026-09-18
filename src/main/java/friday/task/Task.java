@@ -3,11 +3,13 @@ package friday.task;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import friday.FridayException;
+
 /**
  * Represents a task in Friday's task list.
  */
 public class Task {
-    protected final String description;
+    protected String description;
     private boolean isDone;
     private RepeatFrequency repeatFrequency;
 
@@ -121,6 +123,42 @@ public class Task {
      */
     public String getDescription() {
         return description;
+    }
+
+    /** Updates the description without changing the task's dates or status. */
+    public void setDescription(String description) {
+        assert description != null && !description.isBlank() : "Task descriptions must be nonblank";
+        this.description = description;
+    }
+
+    /** Returns whether the task has been completed. */
+    public boolean isDone() {
+        return isDone;
+    }
+
+    /**
+     * Creates the next occurrence, or returns empty for a non-recurring task.
+     *
+     * @return next incomplete occurrence
+     * @throws FridayException if the next date cannot be represented
+     */
+    public Optional<Task> nextOccurrence() throws FridayException {
+        if (repeatFrequency == null) {
+            return Optional.empty();
+        }
+        Task next = createNextOccurrence(repeatFrequency);
+        next.setRepeatFrequency(repeatFrequency);
+        return Optional.of(next);
+    }
+
+    /** Removes recurrence from an occurrence after its successor has been created. */
+    public void clearRepeatFrequency() {
+        repeatFrequency = null;
+    }
+
+    /** Creates a dated successor for an undated recurring task. */
+    protected Task createNextOccurrence(RepeatFrequency frequency) throws FridayException {
+        return new Deadline(description, TaskDateTime.formatForFile(frequency.advance(LocalDateTime.now())));
     }
 
     /**

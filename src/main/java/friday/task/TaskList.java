@@ -55,6 +55,13 @@ public class TaskList {
      */
     public Task mark(int taskIndex) throws FridayException {
         Task task = get(taskIndex);
+        if (!task.isDone()) {
+            Optional<Task> next = task.nextOccurrence();
+            if (next.isPresent()) {
+                tasks.add(next.get());
+                task.clearRepeatFrequency();
+            }
+        }
         task.markAsDone();
         return task;
     }
@@ -133,6 +140,9 @@ public class TaskList {
      */
     public Task setRepeatFrequency(int taskIndex, RepeatFrequency repeatFrequency) throws FridayException {
         Task task = get(taskIndex);
+        if (task.isDone()) {
+            throw new FridayException("Please unmark the task before setting its repeat frequency.");
+        }
         task.setRepeatFrequency(repeatFrequency);
         return task;
     }
@@ -145,7 +155,7 @@ public class TaskList {
     public TaskList getTasksWithReminders() {
         ArrayList<Task> tasksWithReminders = new ArrayList<>();
         for (Task task : tasks) {
-            if (task.getReminderDateTime().isPresent()) {
+            if (!task.isDone() && task.getReminderDateTime().isPresent()) {
                 tasksWithReminders.add(task);
             }
         }
@@ -164,7 +174,7 @@ public class TaskList {
         ArrayList<Task> upcomingReminders = new ArrayList<>();
         for (Task task : tasks) {
             Optional<LocalDateTime> reminderDateTime = task.getReminderDateTime();
-            if (reminderDateTime.isPresent()
+            if (!task.isDone() && reminderDateTime.isPresent()
                     && !reminderDateTime.get().isBefore(start)
                     && !reminderDateTime.get().isAfter(end)) {
                 upcomingReminders.add(task);

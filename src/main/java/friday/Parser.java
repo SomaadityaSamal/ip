@@ -102,6 +102,7 @@ public class Parser {
      * @throws FridayException if the command or task details are invalid
      */
     public static Task parseTask(String command, String details) throws FridayException {
+        validateDescription(details);
         if (command.equals("todo")) {
             return parseTodo(details);
         }
@@ -211,6 +212,10 @@ public class Parser {
     }
 
     private static void applySavedRepeatFrequency(Task task, String[] parts) throws FridayException {
+        int baseFields = task instanceof Event ? 5 : task instanceof Deadline ? 4 : 3;
+        if (parts.length == baseFields) {
+            return;
+        }
         String repeatPrefix = "repeat:";
         String possibleRepeatFrequency = parts[parts.length - 1];
         if (possibleRepeatFrequency.startsWith(repeatPrefix)) {
@@ -226,6 +231,18 @@ public class Parser {
     private static void validateSavedStatus(String status) throws FridayException {
         if (!status.equals("0") && !status.equals("1")) {
             throw new FridayException("Saved task status must be 0 or 1");
+        }
+    }
+
+    /**
+     * Rejects characters reserved by the line-based save format.
+     *
+     * @param description task text to validate
+     * @throws FridayException if reserved characters are present
+     */
+    public static void validateDescription(String description) throws FridayException {
+        if (description.contains("|") || description.contains("\n") || description.contains("\r")) {
+            throw new FridayException("Please do not use pipe (|) characters or line breaks in task descriptions.");
         }
     }
 }

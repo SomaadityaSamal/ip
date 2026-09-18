@@ -2,8 +2,10 @@ package friday.storage;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +38,7 @@ public class Storage {
     public ArrayList<Task> load() throws FridayException {
         ArrayList<Task> tasks = new ArrayList<>();
         try {
-            if (!Files.exists(filePath)) {
+            if (Files.notExists(filePath)) {
                 return tasks;
             }
 
@@ -53,7 +55,7 @@ public class Storage {
             }
             return tasks;
         } catch (IOException | SecurityException e) {
-            throw new FridayException("Sorry, I could not load saved tasks. Starting with an empty list.");
+            throw new FridayException("Sorry, I could not read the saved task file at " + filePath + ".");
         }
     }
 
@@ -64,18 +66,32 @@ public class Storage {
      * @throws FridayException if the tasks cannot be saved
      */
     public void save(TaskList tasks) throws FridayException {
+        Path temporaryFile = null;
         try {
-            Path parentDirectory = filePath.getParent();
-            if (parentDirectory != null) {
-                Files.createDirectories(parentDirectory);
-            }
+            Path parentDirectory = filePath.toAbsolutePath().getParent();
+            Files.createDirectories(parentDirectory);
             List<String> lines = new ArrayList<>();
             for (Task task : tasks.asList()) {
                 lines.add(task.toFileString());
             }
-            Files.write(filePath, lines, StandardCharsets.UTF_8);
+            temporaryFile = Files.createTempFile(parentDirectory, "friday-", ".tmp");
+            Files.write(temporaryFile, lines, StandardCharsets.UTF_8);
+            try {
+                Files.move(temporaryFile, filePath, StandardCopyOption.ATOMIC_MOVE,
+                        StandardCopyOption.REPLACE_EXISTING);
+            } catch (AtomicMoveNotSupportedException e) {
+                Files.move(temporaryFile, filePath, StandardCopyOption.REPLACE_EXISTING);
+            }
         } catch (IOException | SecurityException e) {
             throw new FridayException("Sorry, I could not save your tasks to the hard disk.");
+        } finally {
+            if (temporaryFile != null) {
+                try {
+                    Files.deleteIfExists(temporaryFile);
+                } catch (IOException | SecurityException e) {
+                    // A leftover temporary file must not hide the original save result.
+                }
+            }
         }
     }
 }

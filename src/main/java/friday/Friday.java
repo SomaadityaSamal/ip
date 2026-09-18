@@ -28,9 +28,10 @@ public class Friday {
     private static final long UPCOMING_REMINDER_DAYS = 2;
 
     private final Storage storage;
-    private final TaskList tasks;
+    private TaskList tasks;
     private final Ui ui;
     private boolean lastResponseWasError;
+    private String loadingError;
 
     /**
      * Creates a Friday chatbot that stores tasks at the given file path.
@@ -90,11 +91,14 @@ public class Friday {
             return ui.getBye();
         }
 
+        TaskList previousTasks = tasks;
         try {
+            tasks = copyTasks();
             String response = handleCommand(trimmedInput);
             lastResponseWasError = false;
             return response;
         } catch (FridayException e) {
+            tasks = previousTasks;
             lastResponseWasError = true;
             return ui.getError(e.getMessage());
         }
@@ -117,16 +121,26 @@ public class Friday {
     public String getWelcome() {
         LocalDateTime now = LocalDateTime.now();
         TaskList upcomingReminders = tasks.getUpcomingReminders(now, now.plusDays(UPCOMING_REMINDER_DAYS));
-        return ui.getWelcome(upcomingReminders);
+        String welcome = ui.getWelcome(upcomingReminders);
+        return loadingError == null ? welcome : welcome + "\n\n" + loadingError;
     }
 
     private TaskList loadTaskList() {
         try {
             return new TaskList(storage.load());
         } catch (FridayException e) {
-            ui.showLoadingError();
+            loadingError = e.getMessage() + "\nChanges are disabled to protect your saved tasks. "
+                    + "Back up and repair the save file, then restart Friday.";
             return new TaskList();
         }
+    }
+
+    private TaskList copyTasks() throws FridayException {
+        TaskList copy = new TaskList();
+        for (Task task : tasks.asList()) {
+            copy.add(Parser.parseSavedTask(task.toFileString()));
+        }
+        return copy;
     }
 
     private String handleCommand(String input) throws FridayException {
@@ -137,6 +151,16 @@ public class Friday {
         assert !command.isBlank() : "Parsed command should not be blank";
 
         String normalizedCommand = command.toLowerCase(Locale.ROOT);
+
+        if (loadingError != null && !normalizedCommand.equals(COMMAND_HELP)
+                && !normalizedCommand.equals(COMMAND_LIST) && !normalizedCommand.equals(COMMAND_FIND)
+                && !normalizedCommand.equals(COMMAND_REMINDERS)) {
+            throw new FridayException(loadingError);
+        }
+
+        if (normalizedCommand.equals("edit")) {
+            return editDescription(details);
+        }
 
         if (normalizedCommand.equals(COMMAND_HELP)) {
             requireNoDetails(normalizedCommand, details);
@@ -149,9 +173,11 @@ public class Friday {
         }
 
         if (normalizedCommand.equals(COMMAND_MARK)) {
+            int previousSize = tasks.size();
             Task task = tasks.mark(Parser.parseTaskNumber(details));
             storage.save(tasks);
-            return ui.getTaskMarked(task);
+            return ui.getTaskMarked(task) + (tasks.size() > previousSize
+                    ? "\nThe next occurrence has been added as task " + tasks.size() + "." : "");
         }
 
         if (normalizedCommand.equals(COMMAND_UNMARK)) {
@@ -200,6 +226,19 @@ public class Friday {
 
     private boolean isExitCommand(String input) {
         return input.equalsIgnoreCase(COMMAND_BYE);
+    }
+
+    private String editDescription(String details) throws FridayException {
+        String description = Parser.getDetails(details);
+        if (description.isBlank()) {
+            throw new FridayException("Please use: edit <task number> <description>");
+        }
+        int index = Parser.parseTaskNumber(Parser.getCommand(details));
+        Parser.validateDescription(description);
+        Task task = tasks.get(index);
+        task.setDescription(description);
+        storage.save(tasks);
+        return "Updated task description, sir:\n" + task;
     }
 
     private void requireNoDetails(String command, String details) throws FridayException {

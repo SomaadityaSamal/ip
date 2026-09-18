@@ -26,11 +26,7 @@ public class Ui {
      * @return welcome message
      */
     public String getWelcome(TaskList upcomingReminders) {
-        String banner = "_____ ____  ___ ____    _ __   __\n"
-                         + "|  ___|  _ \\|_ _|  _ \\  / \\\\ \\ / /\n"
-                         + "| |_  | |_) || || | | |/ _ \\\\ V / \n"
-                         + "|  _| |  _ < | || |_| / ___ \\| |  \n"
-                         + "|_|   |_| \\_\\___|____/_/   \\_\\_|";
+        String banner = "FRIDAY";
 
         return banner + "\n"
                 + "\n"
@@ -274,7 +270,8 @@ public class Ui {
                 + "10. repeat <task number> <frequency> - makes a task recurring\n"
                 + "11. reminders - shows dated tasks sorted chronologically\n"
                 + "12. help - shows this help message\n"
-                + "13. bye - exits the application";
+                + "13. bye - exits the application\n"
+                + "14. edit <task number> <description> - changes a task description";
     }
 
     private String getStartupReminderText(TaskList upcomingReminders) {

@@ -1,5 +1,7 @@
 package friday.task;
 
+import java.time.DateTimeException;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -42,6 +44,17 @@ public class Event extends Task {
     @Override
     public String getTaskTypeIcon() {
         return "E";
+    }
+
+    @Override
+    protected Task createNextOccurrence(RepeatFrequency frequency) throws FridayException {
+        LocalDateTime nextStart = frequency.advance(from);
+        try {
+            LocalDateTime nextEnd = nextStart.plus(Duration.between(from, to));
+            return new Event(description, TaskDateTime.formatForFile(nextStart), TaskDateTime.formatForFile(nextEnd));
+        } catch (DateTimeException e) {
+            throw new FridayException("The next recurring event is outside the supported date range.");
+        }
     }
 
     /**
