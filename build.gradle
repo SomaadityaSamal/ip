@@ -17,9 +17,17 @@ repositories {
     mavenCentral()
 }
 
+configurations {
+    macIntelNatives
+    macArmNatives
+}
+
 dependencies {
     String javaFxVersion = '17.0.7'
     String jUnitVersion = '5.14.4'
+
+    macIntelNatives("org.openjfx:javafx-graphics:${javaFxVersion}:mac") { transitive = false }
+    macArmNatives("org.openjfx:javafx-graphics:${javaFxVersion}:mac-aarch64") { transitive = false }
 
     implementation("org.openjfx:javafx-base:${javaFxVersion}:win")
     implementation("org.openjfx:javafx-base:${javaFxVersion}:mac")
@@ -67,6 +75,20 @@ jar {
 
 shadowJar {
     archiveFileName = 'friday.jar'
+    // Keep both Mac architectures without colliding native library filenames.
+    eachFile {
+        if (!path.contains('/') && path.endsWith('.dylib')) {
+            exclude()
+        }
+    }
+    from({ project.configurations.macIntelNatives.collect { zipTree(it) } }) {
+        include '*.dylib'
+        into 'natives/mac-x64'
+    }
+    from({ project.configurations.macArmNatives.collect { zipTree(it) } }) {
+        include '*.dylib'
+        into 'natives/mac-arm64'
+    }
 }
 
 run {
