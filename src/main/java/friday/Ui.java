@@ -26,7 +26,11 @@ public class Ui {
      * @return welcome message
      */
     public String getWelcome(TaskList upcomingReminders) {
-        String banner = "FRIDAY";
+        String banner = " _____ ____  ___ ____    _ __   __\n"
+                + "|  ___|  _ \\|_ _|  _ \\  / \\ \\ / /\n"
+                + "| |_  | |_) || || | | |/ _ \\ V /\n"
+                + "|  _| |  _ < | || |_| / ___ \\| |\n"
+                + "|_|   |_| \\_\\___|____/_/   \\_\\_|";
 
         return banner + "\n"
                 + "\n"

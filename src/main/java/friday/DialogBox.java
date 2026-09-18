@@ -87,6 +87,19 @@ public class DialogBox extends HBox {
         return getFridayDialog(text, image, false);
     }
 
+    /**
+     * Creates a welcome bubble with fixed-width lettering for the ASCII banner.
+     *
+     * @param text welcome message and optional reminders
+     * @param image Friday's profile picture
+     * @return welcome dialog box
+     */
+    public static DialogBox getWelcomeDialog(String text, Image image) {
+        DialogBox dialogBox = getFridayDialog(text, image);
+        dialogBox.dialog.getStyleClass().add("welcome-label");
+        return dialogBox;
+    }
+
     private void formatFridayDialog(boolean isError) {
         ObservableList<Node> nodes = FXCollections.observableArrayList(getChildren());
         Collections.reverse(nodes);

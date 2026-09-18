@@ -50,7 +50,7 @@ public class MainWindow extends AnchorPane {
         assert friday != null : "MainWindow should be initialized with a Friday instance";
 
         this.friday = friday;
-        dialogContainer.getChildren().add(DialogBox.getFridayDialog(friday.getWelcome(), fridayImage));
+        dialogContainer.getChildren().add(DialogBox.getWelcomeDialog(friday.getWelcome(), fridayImage));
     }
 
     /**

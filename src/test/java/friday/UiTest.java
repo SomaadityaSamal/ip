@@ -14,6 +14,14 @@ import friday.task.Todo;
 class UiTest {
 
     @Test
+    void getWelcome_includesAsciiBannerBeforeGreeting() {
+        String welcome = new Ui().getWelcome();
+
+        assertTrue(welcome.startsWith(" _____ ____  ___ ____    _ __   __\n"));
+        assertTrue(welcome.contains("|_|   |_| \\_\\___|____/_/   \\_\\_|\n\nAll systems are online"));
+    }
+
+    @Test
     void taskResponses_singleTask_includeTaskAndCounts() {
         Ui ui = new Ui();
         Todo task = new Todo("read book");
